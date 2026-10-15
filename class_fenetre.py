@@ -147,50 +147,6 @@ class fenetre :
                                    self.PosY + (self.raquette_info.hauteur / 2)
                                    )
                 
-    def collision_balle(self):
-   
-            b = self.balle_info
-            r = self.raquette_info
-           
-   
-            rx1 = self.PosX - (r.larguer / 2)
-            rx2 = self.PosX + (r.larguer / 2)
-            ry1 = self.PosY - (r.hauteur / 2)
-            ry2 = self.PosY + (r.hauteur / 2)
-   
-            bx1 = b.x - b.rayon
-            bx2 = b.x + b.rayon
-            by1 = b.y - b.rayon
-            by2 = b.y + b.rayon
-   
-           
-            if bx2 < rx1 or bx1 > rx2 or by2 < ry1 or by1 > ry2:
-               return
-   
-            overlap_x = min(bx2, rx2) - max(bx1, rx1)
-            overlap_y = min(by2, ry2) - max(by1, ry1)
-   
-   
-            if overlap_x < overlap_y:
-               b.DX = -b.DX
-   
-               if b.DX > 0:
-                   b.x = rx2 + b.rayon
-               else:
-                   b.x = rx1 - b.rayon
-            else:
-               b.DY = -b.DY
-   
-               if b.DY > 0:
-                   b.y = ry2 + b.rayon
-               else:
-                   b.y = ry1 - b.rayon
-   
-            self.canvas.coords(b.Balle, 
-                               b.x - b.rayon,
-                               b.y - b.rayon, 
-                               b.x + b.rayon, 
-                               b.y + b.rayon)
 
 
     def collision(self, objet1, objet2):
@@ -222,6 +178,10 @@ class fenetre :
                         
         elif self.collision(self.balle_info.Balle, self.raquette) == True :
             self.balle_info.DY = - self.balle_info.DY
+            if self.balle_info.x - self.PosX > self.raquette_info.larguer / 4 :
+                 self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (20 * np.abs(self.balle_info.DX)))
+            elif self.balle_info.x - self.PosX < - self.raquette_info.larguer / 4 :
+                 self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.PosX - self.balle_info.x) / (20 * np.abs(self.balle_info.DX)))
 
         self.balle_info.x += self.balle_info.DX
         self.balle_info.y += self.balle_info.DY
