@@ -8,7 +8,7 @@ car il y un probleme d'importation circulaire
 Le jeu devra présenter une implémentation de liste, une de file et une de pile 
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
-
+a faire finir de modifier les interfaces
 """
 
 import numpy as np
