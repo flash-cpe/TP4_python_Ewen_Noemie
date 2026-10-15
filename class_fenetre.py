@@ -11,12 +11,11 @@ Le jeu devra présenter une implémentation de liste, une de file et une de pile
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
-probleme, le balle s'arrete sur les briques
 a faire finir de modifier les interfaces
 """
 
 import numpy as np
-
+from time import sleep
 import tkinter as tk
 from class_raquette import raquette
 from class_balle import balle
@@ -28,7 +27,7 @@ class fenetre :
 
     def __init__(self):
         self.raquette_info = raquette(10, 100, "blue")
-        
+        self.vie = 1
         self.fenetre = tk.Tk()
         self.fenetre.title("Casse Brique")
         self.menu()
@@ -44,12 +43,13 @@ class fenetre :
 #ecran de jeu
 
         self.frame_jeu = tk.Frame(self.fenetre)
+        self.frame_info = tk.Frame(self.fenetre)
 
 
-        self.text_score = tk.Label(self.frame_jeu, text = "Score :")
+        self.text_score = tk.Label(self.frame_info, text = "Score :")
         self.text_score.pack(padx = "200", pady = "5", side ="right")
 
-        self.text_vie = tk.Label(self.frame_jeu, text = "Vie :")
+        self.text_vie = tk.Label(self.frame_info, text = f"Vie : {self.vie}")
         self.text_vie.pack(padx = "5", pady = "5", side ="left")
 
         self.canvas=tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
@@ -76,10 +76,13 @@ class fenetre :
         
     def charger_ecran_jeu(self):
         self.frame_acceuil.pack_forget()
-        self.frame_jeu.pack()
+        self.frame_jeu.pack(side = "bottom")
+        self.frame_info.pack(side = "top")
         self.canvas.focus_set()
 
     def lancement_jeu(self) :
+        self.vie = 3
+        self.text_vie.config(text = f"Vie : {self.vie}")
          # creation des briques
         self.gestion_briques = gestion_brique(self.canvas)
         self.gestion_briques.creer_brique(5, "green", 10, 10)
@@ -158,41 +161,42 @@ class fenetre :
 
 
     def deplacement(self):
-        # 1. Vérification des collisions avec les briques
-        self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
+            # 1. Vérification des collisions avec les briques
+            self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
-        # 2. Gestion des collisions avec la raquette
-        if self.collision(self.balle_info.Balle, self.raquette) != True :
+            # 2. Gestion des collisions avec la raquette
+            if self.collision(self.balle_info.Balle, self.raquette) != True :
 
-            if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : # rebond a droite
-                self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
-                self.balle_info.DX = - self.balle_info.DX
-            
-            if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : # rebond a gauche
-                self.balle_info.x = 2 * (self.balle_info.rayon - self.balle_info.rayon) - self.balle_info.x
-                self.balle_info.DX = - self.balle_info.DX
+                if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : # rebond a droite
+                    self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
+                    self.balle_info.DX = - self.balle_info.DX
+                
+                if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : # rebond a gauche
+                    self.balle_info.x = 2 * (self.balle_info.rayon - self.balle_info.rayon) - self.balle_info.x
+                    self.balle_info.DX = - self.balle_info.DX
 
-            if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 : # rebond en haut
-                self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
+                if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 : # rebond en haut
+                    self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
+                    self.balle_info.DY = - self.balle_info.DY
+
+
+            elif self.collision(self.balle_info.Balle, self.raquette) == True :
                 self.balle_info.DY = - self.balle_info.DY
-                        
-        elif self.collision(self.balle_info.Balle, self.raquette) == True :
-            self.balle_info.DY = - self.balle_info.DY
-            if self.balle_info.x - self.PosX > self.raquette_info.larguer / 4 :
-                 self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (20 * np.abs(self.balle_info.DX)))
-            elif self.balle_info.x - self.PosX < - self.raquette_info.larguer / 4 :
-                 self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.PosX - self.balle_info.x) / (20 * np.abs(self.balle_info.DX)))
+                if self.balle_info.x - self.PosX > self.raquette_info.larguer / 4 :
+                    self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (20 * np.abs(self.balle_info.DX)))
+                elif self.balle_info.x - self.PosX < - self.raquette_info.larguer / 4 :
+                    self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.PosX - self.balle_info.x) / (20 * np.abs(self.balle_info.DX)))
 
-        self.balle_info.x += self.balle_info.DX
-        self.balle_info.y += self.balle_info.DY
+            self.balle_info.x += self.balle_info.DX
+            self.balle_info.y += self.balle_info.DY
 
-        self.canvas.coords(self.balle_info.Balle,
-                            self.balle_info.x - self.balle_info.rayon,
-                            self.balle_info.y - self.balle_info.rayon,
-                            self.balle_info.x + self.balle_info.rayon,
-                            self.balle_info.y + self.balle_info.rayon)
-        
-        self.fenetre.after(50, self.deplacement)
+            self.canvas.coords(self.balle_info.Balle,
+                                self.balle_info.x - self.balle_info.rayon,
+                                self.balle_info.y - self.balle_info.rayon,
+                                self.balle_info.x + self.balle_info.rayon,
+                                self.balle_info.y + self.balle_info.rayon)
+            
+            self.fenetre.after(50, self.deplacement)
 
 
 
