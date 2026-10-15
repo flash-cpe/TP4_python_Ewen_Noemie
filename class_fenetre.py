@@ -58,7 +58,7 @@ class fenetre :
 
 
         self.gestion_briques = gestion_brique(self.canvas)
-        self.gestion_briques.creer_brique(5, 5, 20 ,100, 10, "green", 0, 0)
+        self.gestion_briques.creer_brique(5, "green", 10, 10)
         
   
 
