@@ -27,12 +27,13 @@ from class_gestion_brique import gestion_brique
 class fenetre :
 
     def __init__(self):
+
         self.raquette_info = raquette(10, 100, "blue")
         
         self.fenetre = tk.Tk()
         self.fenetre.title("Casse Brique")
         self.menu()
-#Ecran principal
+#Ecran d'acceuil
 
         self.frame_acceuil =tk.Frame(self.fenetre,width=650, height=730, bg='#2a2a2a')
         self.frame_acceuil.pack_propagate(False)
@@ -43,16 +44,19 @@ class fenetre :
 
 #ecran de jeu
 
-        self.frame_jeu = tk.Frame(self.fenetre)
+        self.frame_jeu = tk.Frame(self.fenetre,  bg='#2a2a2a')
 
+        self.frame_bar = tk.Frame(self.frame_jeu,width=650, height=50,bg='#1a1a1a')
+        self.frame_bar.pack(side="top", fill="x")
+        self.text_score = tk.Label(self.frame_bar, text = "Score :", font=("Helvetica", 12, "bold"))
+        self.text_score.pack(padx=20, pady=10, side="right")
 
-        self.text_score = tk.Label(self.frame_jeu, text = "Score :")
-        self.text_score.pack(padx = "200", pady = "5", side ="right")
-
-        self.text_vie = tk.Label(self.frame_jeu, text = "Vie :")
-        self.text_vie.pack(padx = "5", pady = "5", side ="left")
+        self.text_vie = tk.Label(self.frame_bar, text = "Vie :3", font=("Helvetica", 12, "bold"))
+        self.text_vie.pack(padx=20, pady=10, side="left")
 
         self.canvas=tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
+        self.canvas.pack()
+
 
         # position initiale de la raquette
         self.PosX = int(self.canvas.cget("width")) / 2 #320
@@ -64,7 +68,7 @@ class fenetre :
         self.canvas.pack()
 
        
-
+#bouton de demarage
         self.bouton_Jeu = tk.Button(self.frame_jeu, text = "démarrer une partie", command = self.lancement_jeu)
         self.bouton_Jeu.pack()
 
