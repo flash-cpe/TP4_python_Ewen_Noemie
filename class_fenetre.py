@@ -189,32 +189,41 @@ class fenetre :
                                b.y + b.rayon)
 
 
+    def collision(self, objet1, objet2):
+        x1, y1, x2, y2 = self.canvas.coords(objet1)
+        a1, b1, a2, b2 = self.canvas.coords(objet2)
+
+        return (x1 < a2 and x2 > a1 and y1 < b2 and y2 > b1)
+
 
     def deplacement(self):
-        if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : # rebon a droite
-            self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
-            self.balle_info.DX = - self.balle_info.DX
-    
-        if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : # rebon a gauche
-            self.balle_info.x = 2 * (self.balle_info.rayon - self.balle_info.rayon) - self.balle_info.x
-            self.balle_info.DX = - self.balle_info.DX
+        if self.collision(self.balle_info.Balle, self.raquette) != True :
 
-        if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 : # rebon en haut
-            print("test")
-            print(self.balle_info.DY)
-            self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
-            self.balle_info.DY = - self.balle_info.DY
-            print(self.balle_info.DY)
+            if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : # rebon a droite
+                self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
+                self.balle_info.DX = - self.balle_info.DX
+            
+            if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : # rebon a gauche
+                self.balle_info.x = 2 * (self.balle_info.rayon - self.balle_info.rayon) - self.balle_info.x
+                self.balle_info.DX = - self.balle_info.DX
+
+            if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 : # rebon en haut
+                self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
+                self.balle_info.DY = - self.balle_info.DY
+                        
                 
+        elif self.collision(self.balle_info.Balle, self.raquette) == True :
+            self.balle_info.DY = - self.balle_info.DY
+
         self.balle_info.x += self.balle_info.DX
         self.balle_info.y += self.balle_info.DY
 
         self.canvas.coords(self.balle_info.Balle,
-                            self.balle_info.x - self.balle_info.rayon,
-                            self.balle_info.y - self.balle_info.rayon,
-                            self.balle_info.x + self.balle_info.rayon,
-                            self.balle_info.y + self.balle_info.rayon)
-
+                                self.balle_info.x - self.balle_info.rayon,
+                                self.balle_info.y - self.balle_info.rayon,
+                                self.balle_info.x + self.balle_info.rayon,
+                                self.balle_info.y + self.balle_info.rayon)
+        
         self.fenetre.after(50, self.deplacement)
 
 
