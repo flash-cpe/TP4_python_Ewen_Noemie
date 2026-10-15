@@ -197,10 +197,10 @@ class fenetre :
         return (x1 < a2 and x2 > a1 and y1 < b2 and y2 > b1)
 
 
+
     def deplacement(self):
         # 1. Vérification des collisions avec les briques
-        if hasattr(self, 'gestion_briques'):
-            self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
+        self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
         # 2. Gestion des collisions avec la raquette
         if self.collision(self.balle_info.Balle, self.raquette) != True :
