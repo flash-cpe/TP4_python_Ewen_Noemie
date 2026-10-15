@@ -11,7 +11,7 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 
 """
 
-from time import sleep
+import numpy as np
 import random
 import tkinter as tk
 from class_raquette import raquette
@@ -174,29 +174,28 @@ class fenetre :
 
 
     def deplacement(self):
-        print("test")
-        print(self.balle_info.x)
-        print(self.balle_info.y)
-        if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur: #rebon a droite
-            self.balle_info.x = 2*(self.balle_info.largeur- self.balle_info.rayon)-self.balle_info.x
-            self.balle_info.DX= -self.balle_info.DX
+        if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : # rebon a droite
+            self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
+            self.balle_info.DX = - self.balle_info.DX
     
-        if self.balle_info.x - self.balle_info.rayon +self.balle_info.DX<0: # rebon a gauche
-            self.balle_info.x= 2*(self.balle_info.rayon-self.balle_info.rayon)-self.x
-            self.balle_info.DX=-self.balle_info.DX
-        if self.balle_info.y - self.balle_info.rayon +self.balle_info.DY<0: #rebon en haut
-            self.balle_info.y=2*(self.rayon-self.y)
-            self.balle_info.DY =- self.balle_info.DY
+        if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : # rebon a gauche
+            self.balle_info.x = 2 * (self.balle_info.rayon - self.balle_info.rayon) - self.balle_info.x
+            self.balle_info.DX = - self.balle_info.DX
+
+        if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 : # rebon en haut
+            print("test")
+            print(self.balle_info.DY)
+            self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
+            self.balle_info.DY = - self.balle_info.DY
+            print(self.balle_info.DY)
                 
-        self.balle_info.x += self.balle_info.DX*10
-        self.balle_info.y += self.balle_info.DY*10
+        self.balle_info.x += self.balle_info.DX
+        self.balle_info.y += self.balle_info.DY
 
         self.canvas.coords(self.balle_info.Balle,
                             self.balle_info.x - self.balle_info.rayon,
                             self.balle_info.y - self.balle_info.rayon,
                             self.balle_info.x + self.balle_info.rayon,
                             self.balle_info.y + self.balle_info.rayon)
-        print("test 2")
-        print(self.balle_info.x)
-        print(self.balle_info.y)
+
         self.fenetre.after(50, self.deplacement)

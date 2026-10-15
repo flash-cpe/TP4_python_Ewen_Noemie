@@ -27,5 +27,4 @@ class balle :
         self.DY = self.vitesse*math.sin(self.angle)
         #Balle = Canevas.create_oval(X-RAYON,Y-RAYON,X+RAYON,Y+RAYON,width=1,outline='red',fill='blue')
         self.Balle = self.canvas.create_oval(self.x-self.rayon, self.y-self.rayon, self.x+self.rayon, self.y+self.rayon, width=1, outline='red', fill='blue')
-        print("vitesse :", self.DX, self.DY)
 
