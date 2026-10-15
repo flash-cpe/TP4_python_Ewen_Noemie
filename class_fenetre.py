@@ -11,8 +11,8 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 
 import random
 import tkinter as tk
-
-from class_barre import raquette
+from class_raquette import raquette
+from class_balle import balle
 from class_gestion_brique import gestion_brique
 
 
@@ -21,6 +21,7 @@ class fenetre :
 
     def __init__(self):
         self.raquette_info = raquette(10, 100, "blue")
+        self.balle_info = balle(4,4,4,4)
         self.fenetre = tk.Tk()
         self.fenetre.title("Casse Brique")
 
@@ -57,11 +58,9 @@ class fenetre :
 
 
         self.gestion_briques = gestion_brique(self.canvas)
-        self.gestion_briques.creer_brique(5, 5, 20 ,100, 10, "green", 5, 6)
+        self.gestion_briques.creer_brique(5, 5, 20 ,100, 10, "green", 0, 0)
         
   
-
-
 
 
 
@@ -110,9 +109,48 @@ class fenetre :
                                    self.PosX + (self.raquette_info.larguer / 2),
                                    self.PosY + (self.raquette_info.hauteur / 2)
                                    )
-        
-    
-
-        
-
-
+                
+    def collision_balle(self):
+   
+            b = self.balle_info
+            r = self.raquette_info
+           
+   
+            rx1 = self.PosX - (r.larguer / 2)
+            rx2 = self.PosX + (r.larguer / 2)
+            ry1 = self.PosY - (r.hauteur / 2)
+            ry2 = self.PosY + (r.hauteur / 2)
+   
+            bx1 = b.x - b.rayon
+            bx2 = b.x + b.rayon
+            by1 = b.y - b.rayon
+            by2 = b.y + b.rayon
+   
+           
+            if bx2 < rx1 or bx1 > rx2 or by2 < ry1 or by1 > ry2:
+               return
+   
+            overlap_x = min(bx2, rx2) - max(bx1, rx1)
+            overlap_y = min(by2, ry2) - max(by1, ry1)
+   
+   
+            if overlap_x < overlap_y:
+               b.DX = -b.DX
+   
+               if b.DX > 0:
+                   b.x = rx2 + b.rayon
+               else:
+                   b.x = rx1 - b.rayon
+            else:
+               b.DY = -b.DY
+   
+               if b.DY > 0:
+                   b.y = ry2 + b.rayon
+               else:
+                   b.y = ry1 - b.rayon
+   
+            self.canvas.coords(b.Balle, 
+                               b.x - b.rayon,
+                               b.y - b.rayon, 
+                               b.x + b.rayon, 
+                               b.y + b.rayon)
