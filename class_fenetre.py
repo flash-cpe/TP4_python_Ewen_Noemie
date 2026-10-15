@@ -27,8 +27,9 @@ class fenetre :
         
         self.fenetre = tk.Tk()
         self.fenetre.title("Casse Brique")
+        self.menu()
 
-        self.frame = tk.Frame(self.fenetre)
+        self.frame = tk.Frame(self.fenetre, width=650, height=730, bg='#2a2a2a')
         self.frame.pack(side = "top")
 
         self.text_score = tk.Label(self.frame, text = "Score :")
@@ -78,15 +79,18 @@ class fenetre :
         self.fenetre.destroy()
 
     def menu(self):
+        """permet de créer un menu avec différantes options (a determiner)"""
         self.menu_Principal= tk.Menu(self.fenetre)
         self.menu_nondetachable=tk.Menu(self.fenetre, tearoff = 0)
         self.menu_detachable= tk.Menu(self.fenetre, tearoff = 1)
         self.menu_Principal.add_cascade(label = "Menu1", menu = self.menu_nondetachable)
         self.menu_Principal.add_cascade(label = "Menu2", menu = self.menu_detachable)
-        self.menu_detachable.add_command(labe = "Quitter", command = self.fermer)
+        self.menu_detachable.add_command(label = "Quitter", command = self.fermer)
+        self.fenetre['menu'] = self.menu_Principal
 
 
-        #self.menu_principal.add_command(label = "quitter", command = self.fermer)
+
+   
 
 
 
