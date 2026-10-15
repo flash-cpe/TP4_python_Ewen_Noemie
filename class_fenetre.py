@@ -24,7 +24,7 @@ class fenetre :
 
     def __init__(self):
         self.raquette_info = raquette(10, 100, "blue")
-        self.balle_info = balle(4,4,4,4)
+        
         self.fenetre = tk.Tk()
         self.fenetre.title("Casse Brique")
 
@@ -54,6 +54,8 @@ class fenetre :
         self.canvas.bind('<Key>', self.clavier)
         self.canvas.pack()
 
+        self.balle_info = balle(self.canvas, 15,0,int(self.canvas.cget("height")),int(self.canvas.cget("width")))
+
         self.bouton_Jeu = tk.Button(self.fenetre, text = "démarrer une partie")
         self.bouton_Jeu.pack()
 
@@ -63,7 +65,7 @@ class fenetre :
 
         # creation des briques
         self.gestion_briques = gestion_brique(self.canvas)
-        self.gestion_briques.creer_brique(5, "green", 10, 10)
+        #self.gestion_briques.creer_brique(5, "green", 10, 10)
         
   
 

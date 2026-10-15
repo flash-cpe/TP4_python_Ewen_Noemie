@@ -3,11 +3,14 @@ date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la class brique
 a faire : utiliser soit une pile soit une file si possible 
-idee : crer un liste pour les colenne de brique et chaque element de la liste et une pile (ou une file)
 """
 
 
 class brique :
+    """
+    creer une brique sur le canvas a partir de ses donnees de dimension, de positions et de couleur
+    """
+
 
     def __init__(self, posX, posY, hauteur, largeur, couleur, canvas) :
         self.hauteur = hauteur
@@ -22,6 +25,9 @@ class brique :
 
 
         def detruire(self) :
+            """
+            permet de suprimer une brique a partir de ses donnees
+            """
             self.canvas.delete(self.identifiant)
         
     
