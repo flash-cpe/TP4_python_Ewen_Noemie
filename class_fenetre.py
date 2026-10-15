@@ -12,7 +12,7 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 import random
 import tkinter as tk
 
-from class_barre import raquette
+from class_raquette import raquette
 from class_gestion_brique import gestion_brique
 
 
@@ -57,7 +57,7 @@ class fenetre :
 
 
         self.gestion_briques = gestion_brique(self.canvas)
-        self.gestion_briques.creer_brique(5, 5, 20 ,100, 10, "green", 5, 6)
+        self.gestion_briques.creer_brique(5, "green", 10, 10)
         
   
 
