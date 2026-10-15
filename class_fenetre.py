@@ -34,20 +34,21 @@ class fenetre :
         self.frame_acceuil.pack_propagate(False)
         self.frame_acceuil.pack(side="top")
 
+        self.bouton_jouer=tk.Button(self.frame_acceuil,text="jouer", command= self.charger_ecran_jeu)
+        self.bouton_jouer.pack(pady=20)
 
 #ecran de jeu
+
         self.frame_jeu = tk.Frame(self.fenetre)
 
 
-
-
-        self.text_score = tk.Label(self.fenetre, text = "Score :")
+        self.text_score = tk.Label(self.frame_jeu, text = "Score :")
         self.text_score.pack(padx = "200", pady = "5", side ="right")
 
-        self.text_vie = tk.Label(self.fenetre, text = "Vie :")
+        self.text_vie = tk.Label(self.frame_jeu, text = "Vie :")
         self.text_vie.pack(padx = "5", pady = "5", side ="left")
 
-        self.canvas=tk.Canvas(self.fenetre, width = 650, height = 650, bg = 'black')
+        self.canvas=tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
 
         # position initiale de la raquette
         self.PosX = int(self.canvas.cget("width")) / 2 #320
@@ -60,16 +61,20 @@ class fenetre :
 
        
 
-        self.bouton_Jeu = tk.Button(self.fenetre, text = "démarrer une partie", command = self.lancement_jeu)
+        self.bouton_Jeu = tk.Button(self.frame_jeu, text = "démarrer une partie", command = self.lancement_jeu)
         self.bouton_Jeu.pack()
 
         # bouton pour quitter le jeu
-        self.bouton_fermer = tk.Button(self.fenetre, text = "quitter le jeu", fg = "red", command = self.fermer)
+        self.bouton_fermer = tk.Button(self.frame_jeu, text = "quitter le jeu", fg = "red", command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
 
         
         
-  
+    def charger_ecran_jeu(self):
+        self.frame_acceuil.pack_forget()
+        self.frame_jeu.pack()
+        self.canvas.focus_set()
+
     def lancement_jeu(self) :
          # creation des briques
         self.gestion_briques = gestion_brique(self.canvas)
@@ -97,19 +102,15 @@ class fenetre :
 
     def menu(self):
         """permet de créer un menu avec différantes options (a determiner)"""
-        self.menu_Principal= tk.Menu(self.fenetre)
-        self.menu_nondetachable=tk.Menu(self.fenetre, tearoff = 0)
-        self.menu_detachable= tk.Menu(self.fenetre, tearoff = 1)
+        self.menu_Principal = tk.Menu(self.fenetre)
+        self.menu_nondetachable = tk.Menu(self.fenetre, tearoff = 0)
+        self.menu_detachable = tk.Menu(self.fenetre, tearoff = 1)
         self.menu_Principal.add_cascade(label = "Menu1", menu = self.menu_nondetachable)
         self.menu_Principal.add_cascade(label = "Menu2", menu = self.menu_detachable)
         self.menu_detachable.add_command(label = "Quitter", command = self.fermer)
         self.fenetre['menu'] = self.menu_Principal
 
 
-    def charger_ecran_jeu(self):
-        self.frame_menu.pack_forget()
-        self.frame_jeu.pack()
-        self.canvas.focus_set()
    
 
 
@@ -228,3 +229,10 @@ class fenetre :
                             self.balle_info.y + self.balle_info.rayon)
         
         self.fenetre.after(50, self.deplacement)
+
+
+
+
+
+
+
