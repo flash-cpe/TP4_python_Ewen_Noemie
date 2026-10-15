@@ -9,6 +9,7 @@ Le jeu devra présenter une implémentation de liste, une de file et une de pile
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
+probleme, le balle s'arrete sur les briques
 """
 
 import numpy as np
