@@ -88,6 +88,7 @@ class fenetre :
         self.canvas.focus_set()
 
     def lancement_jeu(self) :
+        self.canvas.delete("all")
         self.vie = 3
         self.text_vie.config(text = f"Vie : {self.vie}")
          # creation des briques
@@ -212,6 +213,7 @@ class fenetre :
                                 self.balle_info.y + self.balle_info.rayon)
             
             self.fenetre.after(50, self.deplacement)
+
 
 
 
