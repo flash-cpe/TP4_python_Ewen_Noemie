@@ -1,4 +1,6 @@
 """
+
+prout
 date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la classe de la fenetre du jeu
@@ -10,6 +12,7 @@ Le jeu devra présenter une implémentation de liste, une de file et une de pile
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 probleme, le balle s'arrete sur les briques
+a faire finir de modifier les interfaces
 """
 
 import numpy as np
