@@ -38,10 +38,5 @@ class balle :
             
         self.x += self.DX
         self.y += self.DY
-        """
-        if self.y + self.rayon + self.DY > self.hauteur: #rebon en bas
-            self.y=2*(self.hauteur- self.rayon)-self.y
-            self.DY =- self.DY         
-mettre conditon de descartes avec la raquette  
-"""
+
     
