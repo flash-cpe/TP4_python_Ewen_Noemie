@@ -28,7 +28,6 @@ class gestion_brique :
                 x = espace + colonne * (largeur_brique + espace)                     
                 y = espace + ligne * (hauteur_brique + espace)
     
-                # On crée la brique (la classe s'occupe déjà de create_rectangle)
                 B = brique(x, y, hauteur_brique, largeur_brique, couleur, self.canvas)
                 self.liste_brique.append(B)
 
@@ -56,6 +55,6 @@ class gestion_brique :
                 self.liste_brique.remove(b)
 
                 # Inversion de la trajectoire verticale de la balle (rebond)
-                balle_info.DY = -balle_info.DY
+                balle_info.DY = - balle_info.DY
                 return True
         return False

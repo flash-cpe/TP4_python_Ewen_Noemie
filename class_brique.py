@@ -24,11 +24,11 @@ class brique :
                                                    self.y + self.hauteur, fill = self.couleur)
 
 
-        def detruire(self) :
-            """
-            permet de suprimer une brique a partir de ses donnees
-            """
-            self.canvas.delete(self.identifiant)
+    def detruire(self) :
+        """
+        permet de suprimer une brique a partir de ses donnees
+        """
+        self.canvas.delete(self.identifiant)
         
     
 
