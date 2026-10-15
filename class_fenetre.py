@@ -168,6 +168,7 @@ class fenetre :
 
 
     def deplacement(self):
+        if self.vie != 0 :
             # 1. Vérification des collisions avec les briques
             self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
@@ -185,6 +186,13 @@ class fenetre :
                 if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 : # rebond en haut
                     self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
                     self.balle_info.DY = - self.balle_info.DY
+
+                if self.balle_info.y + self.balle_info.rayon >= int(self.canvas.cget("height")) :
+                    self.canvas.delete(self.balle_info.Balle)
+                    self.vie -= 1
+                    self.text_vie.config(text=f"Vie : {self.vie}")
+                    self.balle_info = balle(self.canvas, self.fenetre, 15, 0,
+                                            int(self.canvas.cget("height")), int(self.canvas.cget("width")))
 
 
             elif self.collision(self.balle_info.Balle, self.raquette) == True :
