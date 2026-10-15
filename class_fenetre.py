@@ -11,7 +11,7 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 
 """
 
-
+from time import sleep
 import random
 import tkinter as tk
 from class_raquette import raquette
@@ -43,32 +43,40 @@ class fenetre :
         self.PosX = int(self.canvas.cget("width")) / 2 #320
         self.PosY = int(self.canvas.cget("height")) - 30  #620
 
-        # creation de la raquette
-        self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
-                                                  self.PosY - (self.raquette_info.hauteur / 2),
-                                                  self.PosX + (self.raquette_info.larguer / 2),
-                                                  self.PosY + (self.raquette_info.hauteur / 2),
-                                                  fill= self.raquette_info.couleur
-                                                  )
+       
         self.canvas.focus_set()
         self.canvas.bind('<Key>', self.clavier)
         self.canvas.pack()
 
-        self.balle_info = balle(self.canvas, 15,0,int(self.canvas.cget("height")),int(self.canvas.cget("width")))
+       
 
-        self.bouton_Jeu = tk.Button(self.fenetre, text = "démarrer une partie")
+        self.bouton_Jeu = tk.Button(self.fenetre, text = "démarrer une partie", command = self.lancement_jeu)
         self.bouton_Jeu.pack()
 
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.fenetre, text = "quitter le jeu", fg = "red", command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
 
-        # creation des briques
-        self.gestion_briques = gestion_brique(self.canvas)
-        #self.gestion_briques.creer_brique(5, "green", 10, 10)
+        
         
   
+    def lancement_jeu(self) :
+         # creation des briques
+        self.gestion_briques = gestion_brique(self.canvas)
+        self.gestion_briques.creer_brique(5, "green", 10, 10)
 
+         # creation de la raquette
+        self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
+                                                    self.PosY - (self.raquette_info.hauteur / 2),
+                                                    self.PosX + (self.raquette_info.larguer / 2),
+                                                    self.PosY + (self.raquette_info.hauteur / 2),
+                                                    fill= self.raquette_info.couleur
+                                                    )
+
+        #creation de la balle
+        self.balle_info = balle(self.canvas, self.fenetre, 15, 0, int(self.canvas.cget("height")),
+                                int(self.canvas.cget("width")))
+        self.deplacement()
 
 
     def fermer(self):
@@ -162,4 +170,33 @@ class fenetre :
                                b.y - b.rayon, 
                                b.x + b.rayon, 
                                b.y + b.rayon)
-            
+
+
+
+    def deplacement(self):
+        print("test")
+        print(self.balle_info.x)
+        print(self.balle_info.y)
+        if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur: #rebon a droite
+            self.balle_info.x = 2*(self.balle_info.largeur- self.balle_info.rayon)-self.balle_info.x
+            self.balle_info.DX= -self.balle_info.DX
+    
+        if self.balle_info.x - self.balle_info.rayon +self.balle_info.DX<0: # rebon a gauche
+            self.balle_info.x= 2*(self.balle_info.rayon-self.balle_info.rayon)-self.x
+            self.balle_info.DX=-self.balle_info.DX
+        if self.balle_info.y - self.balle_info.rayon +self.balle_info.DY<0: #rebon en haut
+            self.balle_info.y=2*(self.rayon-self.y)
+            self.balle_info.DY =- self.balle_info.DY
+                
+        self.balle_info.x += self.balle_info.DX*10
+        self.balle_info.y += self.balle_info.DY*10
+
+        self.canvas.coords(self.balle_info.Balle,
+                            self.balle_info.x - self.balle_info.rayon,
+                            self.balle_info.y - self.balle_info.rayon,
+                            self.balle_info.x + self.balle_info.rayon,
+                            self.balle_info.y + self.balle_info.rayon)
+        print("test 2")
+        print(self.balle_info.x)
+        print(self.balle_info.y)
+        self.fenetre.after(50, self.deplacement)

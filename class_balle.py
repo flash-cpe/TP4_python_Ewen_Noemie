@@ -7,9 +7,11 @@ a faire : modifier le deplacement pour respecter la loi de Descartes quand touch
 import random
 import math
 import tkinter as tk
+from time import sleep
+
 
 class balle :
-    def __init__(self, canvas, rayon, centre, hauteur, largeur) :
+    def __init__(self, canvas, fenetre, rayon, centre, hauteur, largeur) :
         self.rayon = rayon
         self.centre = centre
         self.hauteur = hauteur
@@ -17,6 +19,7 @@ class balle :
         self.x = largeur/2
         self.y = hauteur/2
         self.canvas = canvas
+        self.fenetre = fenetre
         
         self.vitesse = random.uniform(1.8,2)*5
         self.angle= random.uniform(0,2 * math.pi)
@@ -24,20 +27,5 @@ class balle :
         self.DY = self.vitesse*math.sin(self.angle)
         #Balle = Canevas.create_oval(X-RAYON,Y-RAYON,X+RAYON,Y+RAYON,width=1,outline='red',fill='blue')
         self.Balle = self.canvas.create_oval(self.x-self.rayon, self.y-self.rayon, self.x+self.rayon, self.y+self.rayon, width=1, outline='red', fill='blue')
+        print("vitesse :", self.DX, self.DY)
 
-    def deplacement(self):
-        if self.x + self.rayon + self.DX > self.largeur: #rebon a droite
-            self.x = 2*(self.largeur- self.rayon)-self.x
-            self.DX= -self.DX
-
-        if self.x - self.rayon +self.DX<0: # rebon a gauche
-            self.x= 2*(self.rayon-self.rayon)-self.x
-            self.DX=-self.DX
-        if self.y - self.rayon +self.DY<0: #rebon en haut
-            self.y=2*(self.rayon-self.y)
-            self.DY =- self.DY
-            
-        self.x += self.DX
-        self.y += self.DY
-
-    
