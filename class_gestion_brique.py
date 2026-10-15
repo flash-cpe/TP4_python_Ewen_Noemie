@@ -8,6 +8,9 @@ a faire :
 from class_brique import brique
 
 class gestion_brique :
+    """
+    permet de gerer l'ensemble des briques 
+    """
 
     def __init__(self, canvas) :
         self.canvas = canvas
@@ -16,6 +19,11 @@ class gestion_brique :
 
 
     def creer_brique (self, espace, couleur, nb_ligne, nb_colonne) :
+        """
+        les dimensions de chaque briques s'adapte a la taille du canvas
+        et les briques donnees de chaque briques est stocke dans une liste 
+        pour pouvoir les suprimer ensuite
+        """
         hauteur_canvas = int(self.canvas.cget("height"))
         largeur_canvas = int(self.canvas.cget("width"))
 

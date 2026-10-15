@@ -2,8 +2,11 @@
 date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la classe de la fenetre du jeu
-a faire : impossibilité de mettre la fonction clavier dans la class barre car il y un probleme d'importation circulaire
+a faire : impossibilité de mettre la fonction clavier dans la class barre
+car il y un probleme d'importation circulaire
+
 Le jeu devra présenter une implémentation de liste, une de file et une de pile 
+
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 """
@@ -35,10 +38,11 @@ class fenetre :
 
         self.canvas=tk.Canvas(self.fenetre, width = 650, height = 650, bg = 'black')
 
-        # position initiale du pion
-        self.PosX = 320
-        self.PosY = 620
+        # position initiale de la raquette
+        self.PosX = int(self.canvas.cget("width")) / 2 #320
+        self.PosY = int(self.canvas.cget("height")) - 30  #620
 
+        # creation de la raquette
         self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
                                                   self.PosY - (self.raquette_info.hauteur / 2),
                                                   self.PosX + (self.raquette_info.larguer / 2),
@@ -52,10 +56,11 @@ class fenetre :
         self.bouton_Jeu = tk.Button(self.fenetre, text = "démarrer une partie")
         self.bouton_Jeu.pack()
 
+        # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.fenetre, text = "quitter le jeu", fg = "red", command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
 
-
+        # creation des briques
         self.gestion_briques = gestion_brique(self.canvas)
         self.gestion_briques.creer_brique(5, "green", 10, 10)
         
@@ -63,14 +68,10 @@ class fenetre :
 
 
 
-
-
-
-
-
-
-
     def fermer(self):
+        """
+        permer de fermer le fenetre principale 
+        """
         self.fenetre.destroy()
 
     def menu(self):
@@ -87,23 +88,26 @@ class fenetre :
 
 
     def clavier(self, event):
+                """
+                gere le deplacement de la raquette et l'empeche de sortir du canvas
+                """
                 self.largeur_canvas = self.canvas.winfo_width()
-                """ Gestion de l'�v�nement Appui sur une touche du clavier """
+                """ Gestion de l'evenement Appui sur une touche du clavier """
                 touche = event.keysym
                 
-                # d�placement vers la droite
+                # deplacement vers la droite
                 if touche == "Right" and (self.PosX + 20 + self.raquette_info.larguer / 2) < self.largeur_canvas :
                     self.PosX += 20
                 elif touche == "Right" :
                      self.PosX += self.largeur_canvas - (self.PosX + self.raquette_info.larguer / 2)
                 
-                # d�placement vers la gauche
+                # deplacement vers la gauche
                 if touche == "Left" and (self.PosX - 20 - self.raquette_info.larguer / 2) > 0 :
                     self.PosX -= 20
                 elif touche == "Left" :
                     self.PosX -= (self.PosX - self.raquette_info.larguer / 2)
                 
-                # on dessine le pion � sa nouvelle position
+                # on dessine le pion a sa nouvelle position
                 self.canvas.coords(self.raquette,
                                    self.PosX - (self.raquette_info.larguer / 2),
                                    self.PosY - (self.raquette_info.hauteur / 2),
