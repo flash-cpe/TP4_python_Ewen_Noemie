@@ -12,7 +12,7 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 """
 
 import numpy as np
-import random
+
 import tkinter as tk
 from class_raquette import raquette
 from class_balle import balle
@@ -28,9 +28,18 @@ class fenetre :
         self.fenetre = tk.Tk()
         self.fenetre.title("Casse Brique")
         self.menu()
+#Ecran principal
 
-        self.frame = tk.Frame(self.fenetre, width=650, height=730, bg='#2a2a2a')
-        self.frame.pack(side = "top")
+        self.frame_acceuil =tk.frame(self.fenetre,width=650, height=730, bg='#2a2a2a')
+        self.frame_acceuil.pack_propagate(False)
+        self.frame_acceuil.pack(side="top")
+
+
+#ecran de jeu
+        self.frame_jeu = tk.Frame(self.fenetre)
+
+
+
 
         self.text_score = tk.Label(self.frame, text = "Score :")
         self.text_score.pack(padx = "200", pady = "5", side ="right")
@@ -97,7 +106,10 @@ class fenetre :
         self.fenetre['menu'] = self.menu_Principal
 
 
-
+    def charger_ecran_jeu(self):
+        self.frame_menu.pack_forget()
+        self.frame_jeu.pack()
+        self.canvas.focus_set()
    
 
 
