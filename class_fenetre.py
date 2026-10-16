@@ -13,9 +13,7 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 
 a faire finir de modifier les interfaces
 
-probleme de cassage de plusieurs briques en meme temps 
-
-creer une interface pour quand le joueur perd, idée : affiche un message "perdu" et un bouton pour revenir au menu, juste utilise le bouton de demarage de partie
+probleme de cassage de plusieurs briques en meme temps ?
 
 creer differentes briques avec des vies
 
@@ -57,10 +55,13 @@ class fenetre :
         self.frame_bar = tk.Frame(self.frame_jeu, width = 650, height = 50, bg = '#1a1a1a')
         self.frame_bar.pack(side = "top", fill = "x")
 
+        self.text_niveau = tk.Label(self.frame_info, text = "Niveau :", font = ("Helvetica", 12, "bold"))
+        self.text_niveau.pack(padx = 20, pady = 10)
+
         self.text_score = tk.Label(self.frame_bar, text = "Score :", font = ("Helvetica", 12, "bold"))
         self.text_score.pack(padx = 20, pady = 10, side = "right")
 
-        self.text_vie = tk.Label(self.frame_info, text = "Vie :", font = ("Helvetica", 12, "bold"))
+        self.text_vie = tk.Label(self.frame_bar, text = "Vie :", font = ("Helvetica", 12, "bold"))
         self.text_vie.pack(padx = 20, pady = 10, side = "left")
 
         self.canvas = tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
@@ -76,10 +77,10 @@ class fenetre :
         self.canvas.bind('<Key>', self.clavier)
         self.canvas.pack()
 
-       
-        # bouton de demarage
-        self.bouton_Jeu = tk.Button(self.frame_jeu, text = "démarrer une partie", command = self.lancement_jeu)
-        self.bouton_Jeu.pack()
+        # boutton pour lancer le jeu
+        self.bouton_rejouer = tk.Button(self.canvas, text="Jouer", command = self.lancement_jeu,
+                    bg="#4CAF50", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
+        self.canvas.create_window(325, 350, window = self.bouton_rejouer)
 
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.frame_jeu, text = "quitter le jeu", fg = "red", command = self.fermer)
@@ -109,9 +110,9 @@ class fenetre :
         self.vie = 3
         self.text_vie.config(text = f"Vie : {self.vie}")
 
-         # creation des briques
+         # creation des briques, creer_brique(espece, couleur, ligne, colonne)
         self.gestion_briques = gestion_brique(self.canvas)
-        self.gestion_briques.creer_brique(5, "green", 10, 10)
+        self.gestion_briques.creer_brique(10, "green", 5, 5)
 
          # creation de la raquette
         self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
@@ -197,12 +198,12 @@ class fenetre :
         """
         gere le deplacement et les collision de la balle
         """
-        if self.vie != 0 :
+        if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
             # verification des collisions avec les briques
-            self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
+            collision = self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
             # si il a une collision avec une brique, le score augmente de 1
-            if self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas) == True :
+            if collision == True :
                 self.score += 1
                 self.text_score.config(text = f"Score : {self.score}")
 
@@ -257,6 +258,46 @@ class fenetre :
             # rafraichissement de la fenetre pour mettre a jour la position et le vitesse
             self.fenetre.after(50, self.deplacement)
 
+        if self.vie == 0 :
+            self.fin_jeu()
+
+        if len(self.gestion_briques.liste_brique) == 0 :
+            self.canvas.delete(self.balle_info.Balle)
+            self.gagnez()
+            return
+
+
+
+    def fin_jeu(self) :
+        """
+        affiche un message de fin et le bouton de redémarrage sur le canvas
+        """
+        # afficher le texte "Game Over" au centre du canvas
+        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red", font = ("Arial", 32, "bold"))
+        
+        # creer un bouton "Rejouer"
+        self.bouton_rejouer = tk.Button(self.canvas, text="Rejouer", command = self.lancement_jeu,
+            bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+        
+        # incruster ce bouton sur le canvas
+        self.canvas.create_window(325, 350, window = self.bouton_rejouer)
+
+
+    def gagnez(self) :
+        """
+        affiche un message de fin et le bouton de redémarrage sur le canvas
+        """
+        # afficher les statistique du joueur au centre du canvas
+        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Arial", 32, "bold"))
+        self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}",
+                                justify = "left", fill = "white", font = ("Arial", 32, "bold"))
+        
+        # creer un bouton "Rejouer"
+        self.bouton_rejouer = tk.Button(self.canvas, text = "Rejouer", command = self.lancement_jeu,
+            bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+                
+        # incruster ce bouton sur le canvas
+        self.canvas.create_window(325, 350, window = self.bouton_rejouer)
 
 
 

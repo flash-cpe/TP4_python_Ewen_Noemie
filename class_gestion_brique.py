@@ -30,7 +30,7 @@ class gestion_brique :
 
         for ligne in range(nb_ligne) :
             for colonne in range(nb_colonne) :
-                x = espace + colonne * (largeur_brique + espace)                     
+                x = espace / 2 + colonne * (largeur_brique + espace)                     
                 y = espace + ligne * (hauteur_brique + espace)
     
                 B = brique(x, y, hauteur_brique, largeur_brique, couleur, self.canvas)
@@ -39,28 +39,47 @@ class gestion_brique :
 
     def verifier_collision_balle(self, balle_info, canvas) :
         """
-        Vérifie la collision entre la balle et chaque brique.
-        Si collision il y a : on détruit la brique, on inverse la direction de la balle et on renvoie True.
+        verifie la collision entre la balle et chaque brique (dessus/dessous et cotes).
+        si collision il y a : on détruit la brique, on inverse la bonne direction de la balle et on renvoie True.
         """
-        bx1 = balle_info.x - balle_info.rayon
-        bx2 = balle_info.x + balle_info.rayon
-        by1 = balle_info.y - balle_info.rayon
-        by2 = balle_info.y + balle_info.rayon
+        b = balle_info
+        bx1 = b.x - b.rayon
+        bx2 = b.x + b.rayon
+        by1 = b.y - b.rayon
+        by2 = b.y + b.rayon
 
-        for b in self.liste_brique :
-            # Récupère les coordonnées actuelles de la brique sur le canvas
-            coords = canvas.coords(b.identifiant)
+        for brique_obj in self.liste_brique :
+            # recupere les coordonnees actuelles de la brique sur le canvas
+            coords = canvas.coords(brique_obj.identifiant)
             if not coords:
                 continue
             rx1, ry1, rx2, ry2 = coords
 
-            # Test de collision AABB (Box-Box)
+            # test de collision AABB (Box-Box)
             if bx1 < rx2 and bx2 > rx1 and by1 < ry2 and by2 > ry1 :
-                # Destruction de la brique
-                b.detruire()
-                self.liste_brique.remove(b)
+                # calcul de la profondeur du chevauchement pour savoir si on tape par le cote ou par le haut/bas
+                overlap_x = min(bx2, rx2) - max(bx1, rx1)
+                overlap_y = min(by2, ry2) - max(by1, ry1)
 
-                # Inversion de la trajectoire verticale de la balle (rebond)
-                balle_info.DY = - balle_info.DY
+                # destruction de la brique
+                brique_obj.detruire()
+                self.liste_brique.remove(brique_obj)
+
+                # si le chevauchement en X est plus petit, c est un rebond sur le cote (gauche ou droite)
+                if overlap_x < overlap_y:
+                    b.DX = -b.DX
+                    # repositionnement pour eviter que la balle ne reste bloquee dans la brique
+                    if b.DX > 0 :
+                        b.x = rx2 + b.rayon
+                    else :
+                        b.x = rx1 - b.rayon
+                # sinon, c est un rebond vertical (haut ou bas)
+                else :
+                    b.DY = -b.DY
+                    if b.DY > 0 :
+                        b.y = ry2 + b.rayon
+                    else :
+                        b.y = ry1 - b.rayon
+
                 return True
         return False
