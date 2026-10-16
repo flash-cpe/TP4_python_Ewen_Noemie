@@ -2,10 +2,11 @@
 date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la class barre
-a faire :
+a faire : la classe ne sert presque a rien 
 """
 
 class raquette :
+
     def __init__(self, hauteur, largeur, couleur) :
         """
         creation de la classe barre, qui permet d'avoir les information de dimension (de type int) et

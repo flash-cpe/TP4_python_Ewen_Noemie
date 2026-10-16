@@ -11,7 +11,6 @@ class brique :
     creer une brique sur le canvas a partir de ses donnees de dimension, de positions et de couleur
     """
 
-
     def __init__(self, posX, posY, hauteur, largeur, couleur, canvas) :
         self.hauteur = hauteur
         self.largeur = largeur
@@ -20,6 +19,7 @@ class brique :
         self.x = posX
         self.y = posY
 
+        # creation de la brique
         self.identifiant = canvas.create_rectangle(self.x, self.y, self.x + self.largeur,
                                                    self.y + self.hauteur, fill = self.couleur)
 
