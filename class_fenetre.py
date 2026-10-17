@@ -1,21 +1,21 @@
 """
-
-prout
 date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
 car il y un probleme d'importation circulaire
 
-Le jeu devra présenter une implémentation de liste, une de file et une de pile 
+Le jeu devra présenter une implémentation de file et une de pile 
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 a faire finir de modifier les interfaces
 
-probleme de cassage de plusieurs briques en meme temps ?
-
 possible fusion entre fin_jeu() et gagnez()
+
+ameliorer les rebonds sur la raquette (pouvoir enleve de l'angle pour tirer plus droit)
+
+ameliorer vitesse (peut avoir une vitesse en y trop faible)
 """
 
 import numpy as np
@@ -83,12 +83,12 @@ class fenetre :
 
         # boutton pour lancer le jeu
         self.bouton_rejouer = tk.Button(self.canvas, text = "Jouer", command = self.lancement_jeu,
-                    bg="#4CAF50", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
         self.canvas.create_window(325, 300, window = self.bouton_rejouer)
 
         # boutton pour retourner au menu
         self.bouton_retour = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
-                    bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg = "#333333", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
         self.canvas.create_window(325, 400, window = self.bouton_retour)
 
         # bouton pour quitter le jeu
@@ -100,6 +100,10 @@ class fenetre :
         cache la frame du jeu qui contient le canvas et les info du score, vie, niveau.
         Et affiche la frame du menu
         """
+        # verifie si le canvas existe
+        if hasattr(self, "canvas") :
+            self.canvas.delete("fin")
+
         self.frame_jeu.pack_forget()
         self.frame_bar.pack_forget()
         self.frame_info.pack_forget()
@@ -116,11 +120,19 @@ class fenetre :
 
         self.frame_acceuil.pack_forget()
 
+        self.frame_info.pack(side = "top")
         self.frame_bar.pack(side = "top", fill = "x")
         self.frame_jeu.pack(side = "bottom")
-        self.frame_info.pack(side = "top")
 
-        self.canvas.focus_set()
+        self.bouton_jouer = tk.Button(self.canvas, text = "Jouer", command = self.lancement_jeu,
+                    bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+        self.canvas.create_window(325, 300, window = self.bouton_jouer)
+
+        self.bouton_retour_menu = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
+                    bg = "#333333", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+        self.canvas.create_window(325, 400, window = self.bouton_retour_menu)
+
+        self.canvas.focus_set()        
 
 
     def lancement_jeu(self) :
@@ -154,8 +166,7 @@ class fenetre :
                                                     self.PosY - (self.raquette_info.hauteur / 2),
                                                     self.PosX + (self.raquette_info.larguer / 2),
                                                     self.PosY + (self.raquette_info.hauteur / 2),
-                                                    fill = self.raquette_info.couleur
-                                                    )
+                                                    fill = self.raquette_info.couleur)
 
         #creation de la balle
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
@@ -213,9 +224,7 @@ class fenetre :
                             self.PosX - (self.raquette_info.larguer / 2),
                            self.PosY - (self.raquette_info.hauteur / 2),
                            self.PosX + (self.raquette_info.larguer / 2),
-                           self.PosY + (self.raquette_info.hauteur / 2)
-                            )
-                
+                           self.PosY + (self.raquette_info.hauteur / 2))
 
 
     def collision(self, objet1, objet2) :
@@ -252,12 +261,12 @@ class fenetre :
 
                 # rebond a gauche
                 if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : 
-                    self.balle_info.x = 2 * (self.balle_info.rayon - self.balle_info.rayon) - self.balle_info.x
+                    self.balle_info.x = 2 * self.balle_info.rayon - self.balle_info.x
                     self.balle_info.DX = - self.balle_info.DX
 
                  # rebond en haut
                 if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 :
-                    self.balle_info.y = 2 * np.abs((self.balle_info.rayon - self.balle_info.y))
+                    self.balle_info.y = 2 * self.balle_info.rayon - self.balle_info.y
                     self.balle_info.DY = - self.balle_info.DY
 
                 # touche le bas du canvas
@@ -273,10 +282,17 @@ class fenetre :
                 self.balle_info.DY = - self.balle_info.DY
 
                 if self.balle_info.x - self.PosX > self.raquette_info.larguer / 5 :
-                    self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
-                    
+                    if self.balle_info.DX > 0 :
+                        self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
+                    else :
+                        self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (15 * self.balle_info.DX))
+
+
                 elif self.balle_info.x - self.PosX < - self.raquette_info.larguer / 5 :
-                    self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.PosX - self.balle_info.x) / (33 * self.balle_info.DX))
+                    if self.balle_info.DX < 0 :
+                        self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
+                    else :
+                        self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (15 * self.balle_info.DX))
                     
                     
             # nouvelle vitesse de la balle
@@ -308,7 +324,7 @@ class fenetre :
         affiche un message de fin et les boutons pour rejouer et retourner au menu
         """
         # afficher le texte "Game Over" au centre du canvas
-        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red", font = ("Arial", 32, "bold"))
+        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red", font = ("Arial", 32, "bold"), tags = "fin")
         
         # creer un bouton "Rejouer"
         self.bouton_rejouer = tk.Button(self.canvas, text="Rejouer", command = self.lancement_jeu,
@@ -320,8 +336,8 @@ class fenetre :
         
         
         # incruster des boutons sur le canvas
-        self.canvas.create_window(325, 300, window = self.bouton_rejouer)
-        self.canvas.create_window(325, 400, window = self.bouton_retour)
+        self.canvas.create_window(325, 300, window = self.bouton_rejouer, tags = "fin")
+        self.canvas.create_window(325, 400, window = self.bouton_retour, tags = "fin")
 
 
     def gagnez(self) :
@@ -329,9 +345,9 @@ class fenetre :
         affiche un message de fin et les boutons pour rejoeur et retourner au menu
         """
         # afficher les statistique du joueur au centre du canvas
-        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Arial", 32, "bold"))
+        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Arial", 32, "bold"), tags = "fin")
         self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}",
-                                justify = "left", fill = "white", font = ("Arial", 32, "bold"))
+                                justify = "left", fill = "white", font = ("Arial", 20, "bold"), tags = "fin")
         
         # creer un bouton "Rejouer"
         self.bouton_rejouer = tk.Button(self.canvas, text = "Rejouer", command = self.lancement_jeu,
@@ -342,8 +358,8 @@ class fenetre :
                     bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
         
         # incruster ce bouton sur le canvas
-        self.canvas.create_window(325, 400, window = self.bouton_rejouer)
-        self.canvas.create_window(325, 500, window = self.bouton_retour)
+        self.canvas.create_window(325, 400, window = self.bouton_rejouer, tags = "fin")
+        self.canvas.create_window(325, 500, window = self.bouton_retour, tags = "fin")
 
 
 
