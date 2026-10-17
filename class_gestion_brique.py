@@ -62,8 +62,12 @@ class gestion_brique :
                 overlap_y = min(by2, ry2) - max(by1, ry1)
 
                 # destruction de la brique
-                brique_obj.detruire()
-                self.liste_brique.remove(brique_obj)
+                if self.canvas.itemcget(brique_obj.identifiant, "fill") == "green" :
+                    self.canvas.itemconfig(brique_obj.identifiant, fill = "red")
+
+                elif self.canvas.itemcget(brique_obj.identifiant, "fill") == "red" :
+                    brique_obj.detruire()
+                    self.liste_brique.remove(brique_obj)
 
                 # si le chevauchement en X est plus petit, c est un rebond sur le cote (gauche ou droite)
                 if overlap_x < overlap_y:
