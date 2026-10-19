@@ -18,6 +18,8 @@ ameliorer les rebonds sur la raquette (pouvoir enleve de l'angle pour tirer plus
 
 import numpy as np
 import tkinter as tk
+from collections import deque
+
 from class_raquette import raquette
 from class_balle import balle
 from class_gestion_brique import gestion_brique
@@ -27,6 +29,7 @@ from class_gestion_brique import gestion_brique
 class fenetre :
 
     def __init__(self) :
+        self.file_niveaux = deque(["niveau_1", "niveau_2", "niveau_3"])
 
         self.raquette_info = raquette(10, 100, "blue")
         self.vie = 1
