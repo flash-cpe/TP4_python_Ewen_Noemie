@@ -30,7 +30,11 @@ class balle :
         self.angle = random.uniform(0, 2 * math.pi)
         if self.angle < math.pi * (5 / 3) and self.angle > math.pi * (4 / 3) :
             self.angle += (math.pi / 3) * math.copysign(1, self.angle)
-            
+
+        if self.angle < math.pi / 6 and self.angle > math.pi * (5 / 6)\
+            or self.angle < math.pi * (4 / 6) and self.angle > math.pi * (2 / 6) :
+            self.angle = random.uniform(math.pi / 6 , math.pi * (2 / 6))
+
         self.DX = self.vitesse*math.cos(self.angle)
         self.DY = self.vitesse*math.sin(self.angle)
 

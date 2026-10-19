@@ -14,8 +14,6 @@ a faire finir de modifier les interfaces
 possible fusion entre fin_jeu() et gagnez()
 
 ameliorer les rebonds sur la raquette (pouvoir enleve de l'angle pour tirer plus droit)
-
-ameliorer vitesse (peut avoir une vitesse en y trop faible)
 """
 
 import numpy as np
