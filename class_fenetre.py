@@ -5,7 +5,7 @@ fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
 car il y un probleme d'importation circulaire
 
-Le jeu devra présenter une implémentation de file et une de pile 
+Le jeu devra présenter une implémentation une de pile 
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
@@ -29,7 +29,8 @@ from class_gestion_brique import gestion_brique
 class fenetre :
 
     def __init__(self) :
-        self.file_niveaux = deque(["niveau_1", "niveau_2", "niveau_3"])
+        self.file_niveaux = deque([1, 2, 3, 4])
+        self.prochain_niveau = self.file_niveaux.popleft()
 
         self.raquette_info = raquette(10, 100, "blue")
         self.vie = 1
@@ -43,12 +44,11 @@ class fenetre :
         self.frame_acceuil.pack_propagate(False)
         self.frame_acceuil.pack(side = "top")
 
-        # creation des boutons pour chaque niveau (de 1 a 4)
-        for i in range(1, 5):
-            btn = tk.Button(self.frame_acceuil, text = f"Niveau {i}",
-                command = lambda niv = i : self.charger_ecran_jeu(niv),
-                bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
-            btn.pack(pady = 10)
+        # creation des boutons pour chaque niveau
+        btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
+            command = lambda niv = self.prochain_niveau : self.charger_ecran_jeu(niv),
+            bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
+        btn.pack(pady = 10)
 
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.frame_acceuil, text = "quitter le jeu", fg = "red", command = self.fermer)
@@ -116,6 +116,9 @@ class fenetre :
         """
         charge l'ecran du jeu et cache la frame du menu
         """
+        if hasattr(self, "canvas") :
+            self.canvas.delete("fin")
+
         self.niveau = niveau
         self.text_niveau.config(text = f"Niveau : {self.niveau}")
 
@@ -349,6 +352,12 @@ class fenetre :
         self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Arial", 32, "bold"), tags = "fin")
         self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}",
                                 justify = "left", fill = "white", font = ("Arial", 20, "bold"), tags = "fin")
+
+        # creer un bouton "jouer"
+        if len(self.file_niveaux) != 0 :
+            self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau", command = lambda: self.charger_ecran_jeu(self.file_niveaux.popleft()),
+                bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+            self.canvas.create_window(325, 350, window = self.bouton_jouer, tags = "fin")
         
         # creer un bouton "Rejouer"
         self.bouton_rejouer = tk.Button(self.canvas, text = "Rejouer", command = self.lancement_jeu,
@@ -359,8 +368,9 @@ class fenetre :
                     bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
         
         # incruster ce bouton sur le canvas
+        
         self.canvas.create_window(325, 400, window = self.bouton_rejouer, tags = "fin")
-        self.canvas.create_window(325, 500, window = self.bouton_retour, tags = "fin")
+        self.canvas.create_window(325, 450, window = self.bouton_retour, tags = "fin")
 
 
 
