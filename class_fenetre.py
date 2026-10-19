@@ -190,9 +190,9 @@ class fenetre :
         permet de créer un menu avec différantes options (a determiner)
         """
         self.menu_Principal = tk.Menu(self.fenetre)
-        self.menu_nondetachable = tk.Menu(self.fenetre, tearoff = 0)
+
         self.menu_detachable = tk.Menu(self.fenetre, tearoff = 1)
-        self.menu_Principal.add_cascade(label = "Menu1", menu = self.menu_nondetachable)
+
         self.menu_Principal.add_cascade(label = "Menu2", menu = self.menu_detachable)
         self.menu_detachable.add_command(label = "Quitter", command = self.fermer)
         self.fenetre['menu'] = self.menu_Principal
@@ -371,10 +371,6 @@ class fenetre :
         
         self.canvas.create_window(325, 400, window = self.bouton_rejouer, tags = "fin")
         self.canvas.create_window(325, 450, window = self.bouton_retour, tags = "fin")
-
-
-
-
 
 
 
