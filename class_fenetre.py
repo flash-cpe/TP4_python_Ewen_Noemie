@@ -100,6 +100,11 @@ class fenetre :
         self.bouton_fermer = tk.Button(self.frame_jeu, text = "quitter le jeu", fg = "red", command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
 
+        #mise en pause
+        self.pause= False
+        self.fenetre.bind('<space>', self.mise_en_pause)
+
+
     def ecran_menu(self) :
         """
         cache la frame du jeu qui contient le canvas et les info du score, vie, niveau.
@@ -148,7 +153,8 @@ class fenetre :
         creer tous les objets du canvas et initialise les valeurs
         """
         self.canvas.delete("all")
-
+        self.pause= False
+        print("NOUVELLE PARTIE : La pause est désactivée.")
         self.score = 0
         self.text_score.config(text = f"Score : {self.score}")
 
@@ -212,6 +218,9 @@ class fenetre :
         #creation de la balle
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
+
+        self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Arial", 40, "bold"), fill="white", state='hidden')
+        
         self.deplacement()
 
 
@@ -241,8 +250,52 @@ class fenetre :
     def relacher_touche(self, event):
         if event.keysym in self.touches:
             self.touches[event.keysym] = False
+            
+    def mise_en_pause(self,event=None):
+        self.pause = not self.pause
+        print("Touche Espace pressée ! État de la pause :", self.pause)
 
 
+        if hasattr(self,'texte_pause'):
+            if self.pause :
+                self.canvas.itemconfig(self.texte_pause, state='normal')
+            else:
+                self.canvas.itemconfig(self.texte_pause, state='hidden')
+
+
+
+    def clavier(self, event) :
+        """
+        gere le deplacement de la raquette et l'empeche de sortir du canvas
+        """
+        if self.pause:
+            return 
+            
+        self.largeur_canvas = self.canvas.winfo_width()
+
+        # Gestion de l'evenement Appui sur une touche du clavier 
+        touche = event.keysym
+                
+        # deplacement vers la droite
+        if touche == "Right" and (self.PosX + 20 + self.raquette_info.larguer / 2) < self.largeur_canvas :
+            self.PosX += 20
+        elif touche == "Right" :
+            self.PosX += self.largeur_canvas - (self.PosX + self.raquette_info.larguer / 2)
+                
+        # deplacement vers la gauche
+        if touche == "Left" and (self.PosX - 20 - self.raquette_info.larguer / 2) > 0 :
+            self.PosX -= 20
+        elif touche == "Left" :
+            self.PosX -= (self.PosX - self.raquette_info.larguer / 2)
+                
+        # on dessine le pion a sa nouvelle position
+        self.canvas.coords(self.raquette,
+                            self.PosX - (self.raquette_info.larguer / 2),
+                           self.PosY - (self.raquette_info.hauteur / 2),
+                           self.PosX + (self.raquette_info.larguer / 2),
+                           self.PosY + (self.raquette_info.hauteur / 2))
+
+           
     def collision(self, objet1, objet2) :
         """
         return True si il y a une collision entre les deux ojets
@@ -251,7 +304,6 @@ class fenetre :
         a1, b1, a2, b2 = self.canvas.coords(objet2)
 
         return (x1 < a2 and x2 > a1 and y1 < b2 and y2 > b1)
-
 
 
     def deplacement(self) :
@@ -276,64 +328,67 @@ class fenetre :
 
 
             # verification des collisions avec les briques
-            collision = self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
+
+            if not self.pause:
+
+                collision= self.gestion_briques.verifier_collision_balle(self.balle_info,self.canvas)
 
             # si il a une collision avec une brique, le score augmente de 1
-            if collision == True :
-                self.score += 1
-                self.text_score.config(text = f"Score : {self.score}")
+                if collision == True :
+                    self.score += 1
+                    self.text_score.config(text = f"Score : {self.score}")
 
             # gestion des collisions avec les murs
-            if self.collision(self.balle_info.Balle, self.raquette) != True :
+                if self.collision(self.balle_info.Balle, self.raquette) != True :
 
                 # rebond a droite
-                if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : 
-                    self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
-                    self.balle_info.DX = - self.balle_info.DX
+                    if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : 
+                        self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
+                        self.balle_info.DX = - self.balle_info.DX
 
                 # rebond a gauche
-                if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : 
-                    self.balle_info.x = 2 * self.balle_info.rayon - self.balle_info.x
-                    self.balle_info.DX = - self.balle_info.DX
+                    if self.balle_info.x - self.balle_info.rayon + self.balle_info.DX  < 0 : 
+                        self.balle_info.x = 2 * self.balle_info.rayon - self.balle_info.x
+                        self.balle_info.DX = - self.balle_info.DX
 
                  # rebond en haut
-                if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 :
-                    self.balle_info.y = 2 * self.balle_info.rayon - self.balle_info.y
-                    self.balle_info.DY = - self.balle_info.DY
+                    if self.balle_info.y - self.balle_info.rayon + self.balle_info.DY < 0 :
+                        self.balle_info.y = 2 * self.balle_info.rayon - self.balle_info.y
+                        self.balle_info.DY = - self.balle_info.DY
 
                 # touche le bas du canvas
-                if self.balle_info.y + self.balle_info.rayon >= int(self.canvas.cget("height")) :
-                    self.canvas.delete(self.balle_info.Balle)
-                    self.vie -= 1
-                    self.text_vie.config(text = f"Vie : {self.vie}")
-                    self.balle_info = balle(self.canvas, self.fenetre, 15,
+                    if self.balle_info.y + self.balle_info.rayon >= int(self.canvas.cget("height")) :
+                        self.canvas.delete(self.balle_info.Balle)
+                        self.vie -= 1
+                        self.text_vie.config(text = f"Vie : {self.vie}")
+                        self.balle_info = balle(self.canvas, self.fenetre, 15,
                                             int(self.canvas.cget("height")), int(self.canvas.cget("width")))
 
-            # collision avec la raquette
-            elif self.collision(self.balle_info.Balle, self.raquette) == True:
-                masse_balle = 1.0 
-                
-                self.balle_info.DY = -self.balle_info.DY
-                # L'écart par rapport au centre de la raquette crée une force de rappel latérale F_x
-                offset = self.balle_info.x - self.PosX
-                seuil = self.raquette_info.larguer / 5
+                # collision avec la raquette
+                elif self.collision(self.balle_info.Balle, self.raquette) == True:
+                    masse_balle = 1.0 
+                    
+                    self.balle_info.DY = -self.balle_info.DY
+                    # L'écart par rapport au centre de la raquette crée une force de rappel latérale F_x
+                    offset = self.balle_info.x - self.PosX
+                    seuil = self.raquette_info.larguer / 5
 
-                if abs(offset) > seuil:
-                    k_force = 0.3 
-                    
-                    # Force exercée par la raquette : force_x proportionnelle à l'offset
-                    force_x = k_force * offset
-                    
-                    acceleration_x = force_x / masse_balle
-                    self.balle_info.DX += acceleration_x
+                    if abs(offset) > seuil:
+                        k_force = 0.3 
+                        
+                        # Force exercée par la raquette : force_x proportionnelle à l'offset
+                        force_x = k_force * offset
+                        
+                        acceleration_x = force_x / masse_balle
+                        self.balle_info.DX += acceleration_x
                   
                     
             # nouvelle vitesse de la balle
-            self.balle_info.x += self.balle_info.DX
-            self.balle_info.y += self.balle_info.DY
+                self.balle_info.x += self.balle_info.DX
+                self.balle_info.y += self.balle_info.DY
 
             # nouvelle coordonnees de la balle
-            self.canvas.coords(self.balle_info.Balle,
+                self.canvas.coords(self.balle_info.Balle,
                                 self.balle_info.x - self.balle_info.rayon,
                                 self.balle_info.y - self.balle_info.rayon,
                                 self.balle_info.x + self.balle_info.rayon,
