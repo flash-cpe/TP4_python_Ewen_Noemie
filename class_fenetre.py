@@ -282,22 +282,35 @@ class fenetre :
                                             int(self.canvas.cget("height")), int(self.canvas.cget("width")))
 
             # collision avec la raquette
-            elif self.collision(self.balle_info.Balle, self.raquette) == True :
-                self.balle_info.DY = - self.balle_info.DY
+            elif self.collision(self.balle_info.Balle, self.raquette) == True:
+                
+                # Paramètres physiques (2ème loi de Newton : F = m * a)
+                masse_balle = 1.0  # On pose m = 1 pour simplifier
+                
+                # 1. Rebond vertical (Axe Y) : Force normale de la raquette
+                # Inverse la vitesse verticale (changement brusque de quantité de mouvement)
+                self.balle_info.DY = -self.balle_info.DY
 
-                if self.balle_info.x - self.PosX > self.raquette_info.larguer / 5 :
-                    if self.balle_info.DX > 0 :
-                        self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
-                    else :
-                        self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (15 * self.balle_info.DX))
+                # 2. Effet horizontal (Axe X) basé sur le point d'impact (Loi de Newton)
+                # L'écart par rapport au centre de la raquette crée une force de rappel latérale F_x
+                offset = self.balle_info.x - self.PosX
+                
+                # Seuil d'application de l'effet excentré
+                seuil = self.raquette_info.larguer / 5
 
-
-                elif self.balle_info.x - self.PosX < - self.raquette_info.larguer / 5 :
-                    if self.balle_info.DX < 0 :
-                        self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
-                    else :
-                        self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (15 * self.balle_info.DX))
+                if abs(offset) > seuil:
+                    # Constante de force de la raquette (ajuste l'intensité de l'effet)
+                    k_force = 0.5 
                     
+                    # Force exercée par la raquette : F_x proportionnelle à l'offset (plus on est sur les bords, plus la force est grande)
+                    force_x = k_force * offset
+                    
+                    # Accélération subie par la balle : a_x = F_x / m (avec dt = 1 tick de jeu)
+                    acceleration_x = force_x / masse_balle
+                    
+                    # Mise à jour de la vitesse DX selon la 2ème loi de Newton (v_1 = v_0 + a * dt)
+                    self.balle_info.DX += acceleration_x
+                  
                     
             # nouvelle vitesse de la balle
             self.balle_info.x += self.balle_info.DX
