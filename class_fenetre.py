@@ -55,7 +55,7 @@ class fenetre :
         # creation des boutons pour chaque niveau
         btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
             command = lambda niv = self.prochain_niveau : self.charger_ecran_jeu(niv),
-            bg = '#1a1a1a', fg = "#07fa1f", font = ("Helvetica", 14))
+            bg = '#1a1a1a', fg = "#07fa1f", font = ("Helvetica", 14), padx = 15, pady = 5)
         btn.pack(expand = 1)
 
         # bouton pour quitter le jeu
@@ -130,12 +130,9 @@ class fenetre :
         self.frame_jeu.pack_forget()
         self.frame_bar.pack_forget()
         self.frame_info.pack_forget()
-        print("test")
         self.frame_acceuil.pack(side = "top")
-        print("pack")
 
         for i in range(4 - len(self.file_niveaux)) :
-            print("passage", i)
             btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i + 1]}",
                 command = lambda niv = self.liste_niveau[i + 1] : self.charger_ecran_jeu(niv),
                 bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
@@ -238,9 +235,10 @@ class fenetre :
                                                     fill = self.raquette_info.couleur)
 
         #creation de la balle
+        print("vitesse")
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
-
+        print(self.balle_info.DY)
         self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"), fill="white", state='hidden')
         
         self.deplacement()
