@@ -136,6 +136,7 @@ class fenetre :
         self.frame_bar.pack_forget()
         self.frame_info.pack_forget()
         self.frame_acceuil.pack(side = "top")
+        
 
         for i in range(4 - len(self.file_niveaux)) :
             btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i + 1]}",
@@ -242,10 +243,9 @@ class fenetre :
                                                     fill = self.raquette_info.couleur)
 
         #creation de la balle
-        print("vitesse")
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
-        print(self.balle_info.DY)
+
         self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"), fill="white", state='hidden')
 
         self.chronometre()
@@ -285,17 +285,17 @@ class fenetre :
         if event.keysym in self.touches:
             self.touches[event.keysym] = False
 
-    def mise_en_pause(self,event=None):
+    def mise_en_pause(self,event = None):
         """
         permet de mettre en pause le jeu
         """
         self.pause = not self.pause
 
-        if hasattr(self,'texte_pause'):
+        if hasattr(self,'texte_pause') :
             if self.pause :
-                self.canvas.itemconfig(self.texte_pause, state='normal')
+                self.canvas.itemconfig(self.texte_pause, state = "normal")
             else:
-                self.canvas.itemconfig(self.texte_pause, state='hidden')
+                self.canvas.itemconfig(self.texte_pause, state = "hidden")
 
     def chronometre(self):
         if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
@@ -415,13 +415,24 @@ class fenetre :
 
 
         if self.niveau == 5 :
+            if self.vie == 0 :
+                self.fin_jeu()
+
             if len(self.gestion_briques.liste_brique) == 0 and len(self.pile_brique) != 0 :
                 if self.balle_info.y - self.balle_info.rayon > 300 :
                     for i in range (2) :
                         args = list(self.pile_brique.pop())
                         args[-1] = i
                         self.gestion_briques.creer_brique(*args)
+                        
                 
+                self.balle_info.x += self.balle_info.DX
+                self.balle_info.y += self.balle_info.DY
+                self.canvas.coords(self.balle_info.Balle,
+                                                self.balle_info.x - self.balle_info.rayon,
+                                                self.balle_info.y - self.balle_info.rayon,
+                                                self.balle_info.x + self.balle_info.rayon,
+                                                self.balle_info.y + self.balle_info.rayon)
                 self.fenetre.after(32, self.deplacement)
                             
             
