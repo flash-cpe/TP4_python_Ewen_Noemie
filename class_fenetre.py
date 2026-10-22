@@ -8,13 +8,13 @@ car il y un probleme d'importation circulaire
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 a faire finir de modifier les interfaces
-finir chrono aka mettre l'affichage 
 
 possible fusion entre fin_jeu() et gagnez()
 """
 
 import numpy as np
 import tkinter as tk
+
 from collections import deque
 
 from class_raquette import raquette
@@ -78,14 +78,16 @@ class fenetre :
         self.text_score = tk.Label(self.frame_bar, text = "Score :", font = ("Helvetica", 12, "bold"))
         self.text_score.pack(padx = 20, pady = 10, side = "right")
 
+        self.text_temps = tk.Label(self.frame_bar, text = "Temps : 0s", font = ("Helvetica", 12, "bold"))
+        self.text_temps.pack(padx = 20, pady = 10, side = "right", expand=True)
+
         self.text_vie = tk.Label(self.frame_bar, text = "Vie :", font = ("Helvetica", 12, "bold"))
         self.text_vie.pack(padx = 20, pady = 10, side = "left")
 
         self.canvas = tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
         self.canvas.pack()
 
-        self.text_temps = tk.Label(self.frame_bar, text="Temps: 0s", font=("Helvetica", 12, "bold"))
-        self.text_temps.pack(padx=20, pady=10)
+
 
 
         # position initiale de la raquette
@@ -180,7 +182,9 @@ class fenetre :
         """
         self.canvas.delete("all")
         self.pause= False
+
         self.temps_ecoule = 0
+        self.text_temps.config(text = f"Temps : {self.temps_ecoule}s")
 
 
         self.score = 0
@@ -300,9 +304,12 @@ class fenetre :
                 self.canvas.itemconfig(self.texte_pause, state = "hidden")
 
     def chronometre(self):
+
         if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
             if not self.pause:
                 self.temps_ecoule += 1
+                self.text_temps.config(text = f"Temps : {self.temps_ecoule}s")
+
             self.fenetre.after(1000, self.chronometre)
            
     def collision(self, objet1, objet2) :
