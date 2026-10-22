@@ -27,6 +27,7 @@ from class_gestion_brique import gestion_brique
 class fenetre :
 
     def __init__(self) :
+        self.liste_niveau = [1, 2, 3, 4, 5]
         self.file_niveaux = deque([1, 2, 3, 4, 5])
         self.prochain_niveau = self.file_niveaux.popleft()
 
@@ -81,7 +82,6 @@ class fenetre :
 
        
         self.canvas.focus_set()
-        #self.canvas.bind('<Key>', self.clavier)
         self.canvas.bind("<KeyPress>", self.appuyer_touche)
         self.canvas.bind("<KeyRelease>", self.relacher_touche)
         self.canvas.pack()
@@ -119,6 +119,12 @@ class fenetre :
         self.frame_info.pack_forget()
 
         self.frame_acceuil.pack(side = "top")
+
+        for i in range(len(self.file_niveaux) - 4) :
+            btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i]}",
+                command = lambda niv = self.liste_niveau[i] : self.charger_ecran_jeu(niv),
+                bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
+            btn.pack(pady = 10)
 
 
     def charger_ecran_jeu(self, niveau) :
@@ -250,7 +256,7 @@ class fenetre :
     def relacher_touche(self, event):
         if event.keysym in self.touches:
             self.touches[event.keysym] = False
-            
+
     def mise_en_pause(self,event=None):
         self.pause = not self.pause
         print("Touche Espace pressée ! État de la pause :", self.pause)
@@ -262,38 +268,6 @@ class fenetre :
             else:
                 self.canvas.itemconfig(self.texte_pause, state='hidden')
 
-
-
-    def clavier(self, event) :
-        """
-        gere le deplacement de la raquette et l'empeche de sortir du canvas
-        """
-        if self.pause:
-            return 
-            
-        self.largeur_canvas = self.canvas.winfo_width()
-
-        # Gestion de l'evenement Appui sur une touche du clavier 
-        touche = event.keysym
-                
-        # deplacement vers la droite
-        if touche == "Right" and (self.PosX + 20 + self.raquette_info.larguer / 2) < self.largeur_canvas :
-            self.PosX += 20
-        elif touche == "Right" :
-            self.PosX += self.largeur_canvas - (self.PosX + self.raquette_info.larguer / 2)
-                
-        # deplacement vers la gauche
-        if touche == "Left" and (self.PosX - 20 - self.raquette_info.larguer / 2) > 0 :
-            self.PosX -= 20
-        elif touche == "Left" :
-            self.PosX -= (self.PosX - self.raquette_info.larguer / 2)
-                
-        # on dessine le pion a sa nouvelle position
-        self.canvas.coords(self.raquette,
-                            self.PosX - (self.raquette_info.larguer / 2),
-                           self.PosY - (self.raquette_info.hauteur / 2),
-                           self.PosX + (self.raquette_info.larguer / 2),
-                           self.PosY + (self.raquette_info.hauteur / 2))
 
            
     def collision(self, objet1, objet2) :
@@ -316,15 +290,14 @@ class fenetre :
             vitesse_raquette = 14  
 
             # Si la touche Gauche est enfoncée et qu'on ne sort pas de l'écran
-            if self.touches["Left"] and self.PosX > 0:
+            if self.touches["Left"] and self.PosX - self.raquette_info.larguer / 2 > 0 :
                 self.PosX -= vitesse_raquette
                 self.canvas.move(self.raquette, -vitesse_raquette, 0)
 
             # Si la touche Droite est enfoncée et qu'on ne sort pas de l'écran
-            if self.touches["Right"] and self.PosX < (650 - self.raquette_info.larguer):
+            if self.touches["Right"] and self.PosX < (650 - self.raquette_info.larguer / 2) :
                 self.PosX += vitesse_raquette
                 self.canvas.move(self.raquette, vitesse_raquette, 0)
-
 
 
             # verification des collisions avec les briques
