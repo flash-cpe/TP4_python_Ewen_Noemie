@@ -12,8 +12,6 @@ fichier readme indiquant les règles du jeu et les spécificités de votre impl�
 a faire finir de modifier les interfaces
 
 possible fusion entre fin_jeu() et gagnez()
-
-ameliorer les rebonds sur la raquette (pouvoir enleve de l'angle pour tirer plus droit)
 """
 
 import numpy as np
@@ -154,16 +152,25 @@ class fenetre :
         # creation des briques, creer_brique(espece, couleur, ligne, colonne)
         if self.niveau == 1 : 
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(40, "red", 2, 5)
+            self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "red", 1, 6, 1, 1)
+
         if self.niveau == 2 :
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(20, "red", 4, 5)
+            self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "red", 1, 6, 1, 1)
+            self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 2)
+
         if self.niveau == 3 :
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(40, "green", 2, 5)
+            self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "green", 1, 6, 1, 1)
+
         if self.niveau == 4 :
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(20, "green", 4, 5)
+            self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "green", 1, 6, 1, 1)
+            self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 2)
 
         # creation de la raquette
         self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
@@ -283,32 +290,20 @@ class fenetre :
 
             # collision avec la raquette
             elif self.collision(self.balle_info.Balle, self.raquette) == True:
+                masse_balle = 1.0 
                 
-                # Paramètres physiques (2ème loi de Newton : F = m * a)
-                masse_balle = 1.0  # On pose m = 1 pour simplifier
-                
-                # 1. Rebond vertical (Axe Y) : Force normale de la raquette
-                # Inverse la vitesse verticale (changement brusque de quantité de mouvement)
                 self.balle_info.DY = -self.balle_info.DY
-
-                # 2. Effet horizontal (Axe X) basé sur le point d'impact (Loi de Newton)
                 # L'écart par rapport au centre de la raquette crée une force de rappel latérale F_x
                 offset = self.balle_info.x - self.PosX
-                
-                # Seuil d'application de l'effet excentré
                 seuil = self.raquette_info.larguer / 5
 
                 if abs(offset) > seuil:
-                    # Constante de force de la raquette (ajuste l'intensité de l'effet)
-                    k_force = 0.5 
+                    k_force = 0.3 
                     
-                    # Force exercée par la raquette : F_x proportionnelle à l'offset (plus on est sur les bords, plus la force est grande)
+                    # Force exercée par la raquette : force_x proportionnelle à l'offset
                     force_x = k_force * offset
                     
-                    # Accélération subie par la balle : a_x = F_x / m (avec dt = 1 tick de jeu)
                     acceleration_x = force_x / masse_balle
-                    
-                    # Mise à jour de la vitesse DX selon la 2ème loi de Newton (v_1 = v_0 + a * dt)
                     self.balle_info.DX += acceleration_x
                   
                     
@@ -324,7 +319,7 @@ class fenetre :
                                 self.balle_info.y + self.balle_info.rayon)
 
             # rafraichissement de la fenetre pour mettre a jour la position et le vitesse
-            self.fenetre.after(50, self.deplacement)
+            self.fenetre.after(32, self.deplacement)
 
         if self.vie == 0 :
             self.fin_jeu()
