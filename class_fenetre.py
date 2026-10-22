@@ -31,6 +31,8 @@ class fenetre :
         self.file_niveaux = deque([1, 2, 3, 4, 5])
         self.prochain_niveau = self.file_niveaux.popleft()
 
+        self.boutons_menu = []
+
         self.pile_niveau_5 = []
 
         self.touches = {"Left": False, "Right": False}
@@ -54,7 +56,7 @@ class fenetre :
         btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
             command = lambda niv = self.prochain_niveau : self.charger_ecran_jeu(niv),
             bg = '#1a1a1a', fg = "#07fa1f", font = ("Helvetica", 14))
-        btn.pack(expand=1)
+        btn.pack(expand = 1)
 
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.frame_acceuil, text = "quitter le jeu", fg = "red", command = self.fermer)
@@ -119,17 +121,26 @@ class fenetre :
         if hasattr(self, "canvas") :
             self.canvas.delete("fin")
 
+        # Pour tous les supprimer d'un coup :
+        for btn in self.boutons_menu:
+            btn.destroy()
+        self.boutons_menu.clear() # On vide la liste
+
+
         self.frame_jeu.pack_forget()
         self.frame_bar.pack_forget()
         self.frame_info.pack_forget()
-
+        print("test")
         self.frame_acceuil.pack(side = "top")
+        print("pack")
 
-        for i in range(len(self.file_niveaux) - 4) :
-            btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i]}",
-                command = lambda niv = self.liste_niveau[i] : self.charger_ecran_jeu(niv),
+        for i in range(4 - len(self.file_niveaux)) :
+            print("passage", i)
+            btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i + 1]}",
+                command = lambda niv = self.liste_niveau[i + 1] : self.charger_ecran_jeu(niv),
                 bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
             btn.pack(pady = 10)
+            self.boutons_menu.append(btn) # Tu l'ajoutes à ta liste
 
 
     def charger_ecran_jeu(self, niveau) :
