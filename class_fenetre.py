@@ -51,6 +51,7 @@ class fenetre :
 
         self.titre_menu = tk.Label(self.frame_acceuil, text="Casse Brique", font=("Helvetica", 45, "bold"), bg='#2a2a2a', fg='white')
         self.titre_menu.pack(pady=(150, 50))
+        
 
         # creation des boutons pour chaque niveau
         btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
@@ -173,7 +174,7 @@ class fenetre :
         """
         self.canvas.delete("all")
         self.pause= False
-        print("NOUVELLE PARTIE : La pause est désactivée.")
+
         self.score = 0
         self.text_score.config(text = f"Score : {self.score}")
 
@@ -256,11 +257,16 @@ class fenetre :
         """
         self.menu_Principal = tk.Menu(self.fenetre)
 
-        self.menu_detachable = tk.Menu(self.fenetre, tearoff = 1)
+        self.menu_nondetachable = tk.Menu(self.fenetre, tearoff = 0)
+        self.menu_nondetachable1 = tk.Menu(self.fenetre, tearoff = 0)
+        self.menu_nondetachable2 = tk.Menu(self.fenetre, tearoff = 0)
 
-        self.menu_Principal.add_cascade(label = "Parametre", menu = self.menu_detachable)
-        self.menu_detachable.add_command(label="restaurer le niveau", command=self.ecran_menu)
-        self.menu_detachable.add_command(label = "Quitter", command = self.fermer)
+        self.menu_Principal.add_cascade(label = "Parametre :", menu = self.menu_nondetachable)
+        self.menu_Principal.add_cascade(label="restaurer le niveau", menu = self.menu_nondetachable1) 
+        self.menu_Principal.add_cascade(label="Quitter", menu = self.menu_nondetachable2)
+        self.menu_nondetachable1.add_command(label="restaurer le niveau", command=self.ecran_menu)
+        self.menu_nondetachable2.add_command(label = "Quitter", command = self.fermer)
+
         self.fenetre['menu'] = self.menu_Principal
 
 
