@@ -5,7 +5,7 @@ fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
 car il y un probleme d'importation circulaire
 
-Le jeu devra présenter une implémentation une de pile 
+Le jeu devra présenter une implémentation de pile 
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
@@ -27,8 +27,12 @@ from class_gestion_brique import gestion_brique
 class fenetre :
 
     def __init__(self) :
-        self.file_niveaux = deque([1, 2, 3, 4])
+        self.file_niveaux = deque([1, 2, 3, 4, 5])
         self.prochain_niveau = self.file_niveaux.popleft()
+
+        self.pile_niveau_5 = []
+
+        self.touches = {"Left": False, "Right": False}
 
         self.raquette_info = raquette(10, 100, "blue")
         self.vie = 1
@@ -77,7 +81,9 @@ class fenetre :
 
        
         self.canvas.focus_set()
-        self.canvas.bind('<Key>', self.clavier)
+        #self.canvas.bind('<Key>', self.clavier)
+        self.canvas.bind("<KeyPress>", self.appuyer_touche)
+        self.canvas.bind("<KeyRelease>", self.relacher_touche)
         self.canvas.pack()
 
         # boutton pour lancer le jeu
@@ -149,11 +155,14 @@ class fenetre :
         self.vie = 3
         self.text_vie.config(text = f"Vie : {self.vie}")
 
-        # creation des briques, creer_brique(espece, couleur, ligne, colonne)
+        # creation des briques, creer_brique(espece, couleur, ligne, colonne, saut_colonne, ligne_depart)
         if self.niveau == 1 : 
             self.gestion_briques = gestion_brique(self.canvas)
             self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 0)
             self.gestion_briques.creer_brique(35, "red", 1, 6, 1, 1)
+
+            self.pile_niveau_5.append((35, "red", 1, 5, 0, 0))
+            self.pile_niveau_5.append((35, "red", 1, 6, 1, 1))
 
         if self.niveau == 2 :
             self.gestion_briques = gestion_brique(self.canvas)
@@ -161,16 +170,37 @@ class fenetre :
             self.gestion_briques.creer_brique(35, "red", 1, 6, 1, 1)
             self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 2)
 
+            self.pile_niveau_5.append((35, "red", 1, 5, 0, 0))
+            self.pile_niveau_5.append((35, "red", 1, 6, 1, 1))
+            self.pile_niveau_5.append((35, "red", 1, 5, 0, 2))
+
         if self.niveau == 3 :
             self.gestion_briques = gestion_brique(self.canvas)
             self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 0)
             self.gestion_briques.creer_brique(35, "green", 1, 6, 1, 1)
+
+            self.pile_niveau_5.append((35, "green", 1, 5, 0, 0))
+            self.pile_niveau_5.append((35, "green", 1, 6, 1, 1))
 
         if self.niveau == 4 :
             self.gestion_briques = gestion_brique(self.canvas)
             self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 0)
             self.gestion_briques.creer_brique(35, "green", 1, 6, 1, 1)
             self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 2)
+
+            self.pile_niveau_5.append((35, "green", 1, 5, 0, 0))
+            self.pile_niveau_5.append((35, "green", 1, 6, 1, 1))
+            self.pile_niveau_5.append((35, "green", 1, 5, 0, 2))
+
+        if self.niveau == 5 :
+            self.gestion_briques = gestion_brique(self.canvas)
+            self.pile_brique = self.pile_niveau_5
+            for i in range (2) :
+                args = list(self.pile_brique.pop())
+                args[-1] = i
+                self.gestion_briques.creer_brique(*args)
+                
+
 
         # creation de la raquette
         self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
@@ -182,7 +212,6 @@ class fenetre :
         #creation de la balle
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
-        
         self.deplacement()
 
 
@@ -205,37 +234,13 @@ class fenetre :
         self.fenetre['menu'] = self.menu_Principal
 
 
-   
+    def appuyer_touche(self, event):
+        if event.keysym in self.touches:
+            self.touches[event.keysym] = True
 
-
-
-    def clavier(self, event) :
-        """
-        gere le deplacement de la raquette et l'empeche de sortir du canvas
-        """
-        self.largeur_canvas = self.canvas.winfo_width()
-
-        # Gestion de l'evenement Appui sur une touche du clavier 
-        touche = event.keysym
-                
-        # deplacement vers la droite
-        if touche == "Right" and (self.PosX + 20 + self.raquette_info.larguer / 2) < self.largeur_canvas :
-            self.PosX += 20
-        elif touche == "Right" :
-            self.PosX += self.largeur_canvas - (self.PosX + self.raquette_info.larguer / 2)
-                
-        # deplacement vers la gauche
-        if touche == "Left" and (self.PosX - 20 - self.raquette_info.larguer / 2) > 0 :
-            self.PosX -= 20
-        elif touche == "Left" :
-            self.PosX -= (self.PosX - self.raquette_info.larguer / 2)
-                
-        # on dessine le pion a sa nouvelle position
-        self.canvas.coords(self.raquette,
-                            self.PosX - (self.raquette_info.larguer / 2),
-                           self.PosY - (self.raquette_info.hauteur / 2),
-                           self.PosX + (self.raquette_info.larguer / 2),
-                           self.PosY + (self.raquette_info.hauteur / 2))
+    def relacher_touche(self, event):
+        if event.keysym in self.touches:
+            self.touches[event.keysym] = False
 
 
     def collision(self, objet1, objet2) :
@@ -254,6 +259,22 @@ class fenetre :
         gere le deplacement et les collision de la balle
         """
         if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
+
+            # Vitesse de déplacement de la raquette (en pixels par frame)
+            vitesse_raquette = 14  
+
+            # Si la touche Gauche est enfoncée et qu'on ne sort pas de l'écran
+            if self.touches["Left"] and self.PosX > 0:
+                self.PosX -= vitesse_raquette
+                self.canvas.move(self.raquette, -vitesse_raquette, 0)
+
+            # Si la touche Droite est enfoncée et qu'on ne sort pas de l'écran
+            if self.touches["Right"] and self.PosX < (650 - self.raquette_info.larguer):
+                self.PosX += vitesse_raquette
+                self.canvas.move(self.raquette, vitesse_raquette, 0)
+
+
+
             # verification des collisions avec les briques
             collision = self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
@@ -321,13 +342,33 @@ class fenetre :
             # rafraichissement de la fenetre pour mettre a jour la position et le vitesse
             self.fenetre.after(32, self.deplacement)
 
-        if self.vie == 0 :
-            self.fin_jeu()
+        if self.niveau != 5 :
+            if self.vie == 0 :
+                self.fin_jeu()
 
-        if len(self.gestion_briques.liste_brique) == 0 :
-            self.canvas.delete(self.balle_info.Balle)
-            self.gagnez()
-            return
+            if len(self.gestion_briques.liste_brique) == 0 :
+                self.canvas.delete(self.balle_info.Balle)
+                self.gagnez()
+                return
+
+
+
+        if self.niveau == 5 :
+            if len(self.gestion_briques.liste_brique) == 0 and len(self.pile_brique) != 0 :
+                if self.balle_info.y - self.balle_info.rayon > 300 :
+                    for i in range (2) :
+                        args = list(self.pile_brique.pop())
+                        args[-1] = i
+                        self.gestion_briques.creer_brique(*args)
+                
+                self.fenetre.after(32, self.deplacement)
+                            
+            
+
+            if len(self.gestion_briques.liste_brique) == 0 and len(self.pile_brique) == 0 :
+                self.canvas.delete(self.balle_info.Balle)
+                self.gagnez()
+                return
 
 
 
@@ -375,8 +416,7 @@ class fenetre :
         self.bouton_retour = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
                     bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
         
-        # incruster ce bouton sur le canvas
-        
+        # incruster les boutons sur le canvas
         self.canvas.create_window(325, 400, window = self.bouton_rejouer, tags = "fin")
         self.canvas.create_window(325, 450, window = self.bouton_retour, tags = "fin")
 
