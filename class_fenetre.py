@@ -8,6 +8,7 @@ car il y un probleme d'importation circulaire
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 a faire finir de modifier les interfaces
+finir chrono aka mettre l'affichage 
 
 possible fusion entre fin_jeu() et gagnez()
 """
@@ -82,6 +83,9 @@ class fenetre :
 
         self.canvas = tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
         self.canvas.pack()
+
+        self.text_temps = tk.Label(self.frame_bar, text="Temps: 0s", font=("Helvetica", 12, "bold"))
+        self.text_temps.pack(padx=20, pady=10)
 
 
         # position initiale de la raquette
@@ -176,6 +180,8 @@ class fenetre :
         """
         self.canvas.delete("all")
         self.pause= False
+        self.temps_ecoule = 0
+
 
         self.score = 0
         self.text_score.config(text = f"Score : {self.score}")
@@ -242,8 +248,9 @@ class fenetre :
                                 int(self.canvas.cget("width")))
 
         self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"),
-                                            fill="white", state='hidden')
-        
+                                                fill="white", state='hidden')
+
+        self.chronometre()
         self.deplacement()
 
 
@@ -292,7 +299,11 @@ class fenetre :
             else:
                 self.canvas.itemconfig(self.texte_pause, state = "hidden")
 
-
+    def chronometre(self):
+        if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
+            if not self.pause:
+                self.temps_ecoule += 1
+            self.fenetre.after(1000, self.chronometre)
            
     def collision(self, objet1, objet2) :
         """
@@ -462,7 +473,7 @@ class fenetre :
         """
         # afficher les statistique du joueur au centre du canvas
         self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Helvetica", 32, "bold"), tags = "fin")
-        self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}",
+        self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}\nTemps : {self.temps_ecoule} secondes ",
                                 justify = "left", fill = "white", font = ("Helvetica", 20, "bold"), tags = "fin")
 
         # creer un bouton "jouer"
