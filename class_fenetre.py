@@ -129,6 +129,10 @@ class fenetre :
         if hasattr(self, "canvas") :
             self.canvas.delete("fin")
 
+        if hasattr(self, "rafraichissement") and self.rafraichissement is not None :
+            self.fenetre.after_cancel(self.rafraichissement)
+            self.rafraichissement = None
+
         # Pour tous les supprimer d'un coup :
         for btn in self.boutons_menu :
             btn.destroy()
@@ -410,7 +414,7 @@ class fenetre :
                                 self.balle_info.y + self.balle_info.rayon)
 
             # rafraichissement de la fenetre pour mettre a jour la position et le vitesse
-            self.fenetre.after(32, self.deplacement)
+            self.rafraichissement = self.fenetre.after(32, self.deplacement)
 
         if self.niveau != 5 :
             if self.vie == 0 :
