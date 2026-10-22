@@ -42,15 +42,20 @@ class fenetre :
         self.frame_acceuil.pack_propagate(False)
         self.frame_acceuil.pack(side = "top")
 
+        self.titre_menu = tk.Label(self.frame_acceuil, text="Casse Brique", font=("Helvetica", 45, "bold"), bg='#2a2a2a', fg='white')
+        self.titre_menu.pack(pady=(150, 50))
+
         # creation des boutons pour chaque niveau
         btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
             command = lambda niv = self.prochain_niveau : self.charger_ecran_jeu(niv),
-            bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
-        btn.pack(pady = 10)
+            bg = '#1a1a1a', fg = "#07fa1f", font = ("Helvetica", 14))
+        btn.pack(expand=1)
 
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.frame_acceuil, text = "quitter le jeu", fg = "red", command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
+
+
 
     # ecran de jeu
         self.frame_jeu = tk.Frame(self.fenetre, bg = '#2a2a2a')
@@ -82,12 +87,12 @@ class fenetre :
 
         # boutton pour lancer le jeu
         self.bouton_rejouer = tk.Button(self.canvas, text = "Jouer", command = self.lancement_jeu,
-                    bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
         self.canvas.create_window(325, 300, window = self.bouton_rejouer)
 
         # boutton pour retourner au menu
         self.bouton_retour = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
-                    bg = "#333333", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg = "#333333", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
         self.canvas.create_window(325, 400, window = self.bouton_retour)
 
         # bouton pour quitter le jeu
@@ -132,11 +137,11 @@ class fenetre :
         self.frame_jeu.pack(side = "bottom")
 
         self.bouton_jouer = tk.Button(self.canvas, text = "Jouer", command = self.lancement_jeu,
-                    bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
         self.canvas.create_window(325, 300, window = self.bouton_jouer)
 
         self.bouton_retour_menu = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
-                    bg = "#333333", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg = "#333333", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
         self.canvas.create_window(325, 400, window = self.bouton_retour_menu)
 
         self.canvas.focus_set()        
@@ -189,7 +194,7 @@ class fenetre :
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
 
-        self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Arial", 40, "bold"), fill="white", state='hidden')
+        self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"), fill="white", state='hidden')
         
         self.deplacement()
 
@@ -208,15 +213,17 @@ class fenetre :
 
         self.menu_detachable = tk.Menu(self.fenetre, tearoff = 1)
 
-        self.menu_Principal.add_cascade(label = "Menu2", menu = self.menu_detachable)
+        self.menu_Principal.add_cascade(label = "Parametre", menu = self.menu_detachable)
+        self.menu_detachable.add_command(label="restaurer le niveau", command=self.ecran_menu)
         self.menu_detachable.add_command(label = "Quitter", command = self.fermer)
         self.fenetre['menu'] = self.menu_Principal
 
 
     def mise_en_pause(self,event=None):
+        """
+        permet de mettre en pause le jeu
+        """
         self.pause = not self.pause
-        print("Touche Espace pressée ! État de la pause :", self.pause)
-
 
         if hasattr(self,'texte_pause'):
             if self.pause :
@@ -270,7 +277,7 @@ class fenetre :
 
     def deplacement(self) :
         """
-        gere le deplacement et les collision de la balle
+        gere le deplacement et les collision de la balle + met en pause le jeu
         """
         if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
             # verification des collisions avec les briques
@@ -358,15 +365,15 @@ class fenetre :
         affiche un message de fin et les boutons pour rejouer et retourner au menu
         """
         # afficher le texte "Game Over" au centre du canvas
-        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red", font = ("Arial", 32, "bold"), tags = "fin")
+        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red", font = ("Helvetica", 32, "bold"), tags = "fin")
         
         # creer un bouton "Rejouer"
         self.bouton_rejouer = tk.Button(self.canvas, text="Rejouer", command = self.lancement_jeu,
-            bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+            bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
 
         # boutton pour retourner au menu
         self.bouton_retour = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
-                    bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg="#333333", fg="white", font=("Helvetica", 14, "bold"), padx = 10, pady = 5)
         
         
         # incruster des boutons sur le canvas
@@ -379,29 +386,25 @@ class fenetre :
         affiche un message de fin et les boutons pour rejoeur et retourner au menu
         """
         # afficher les statistique du joueur au centre du canvas
-        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Arial", 32, "bold"), tags = "fin")
+        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Helvetica", 32, "bold"), tags = "fin")
         self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}",
-                                justify = "left", fill = "white", font = ("Arial", 20, "bold"), tags = "fin")
+                                justify = "left", fill = "white", font = ("Helvetica", 20, "bold"), tags = "fin")
 
         # creer un bouton "jouer"
         if len(self.file_niveaux) != 0 :
             self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau", command = lambda: self.charger_ecran_jeu(self.file_niveaux.popleft()),
-                bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+                bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
             self.canvas.create_window(325, 350, window = self.bouton_jouer, tags = "fin")
         
         # creer un bouton "Rejouer"
         self.bouton_rejouer = tk.Button(self.canvas, text = "Rejouer", command = self.lancement_jeu,
-            bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+            bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
 
         # boutton pour retourner au menu
         self.bouton_retour = tk.Button(self.canvas, text = "Retour", command = self.ecran_menu,
-                    bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
+                    bg="#333333", fg="white", font=("Helvetica", 14, "bold"), padx = 10, pady = 5)
         
         # incruster ce bouton sur le canvas
         
         self.canvas.create_window(325, 400, window = self.bouton_rejouer, tags = "fin")
         self.canvas.create_window(325, 450, window = self.bouton_retour, tags = "fin")
-
-
-
-
