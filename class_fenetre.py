@@ -5,8 +5,6 @@ fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
 car il y un probleme d'importation circulaire
 
-Le jeu devra présenter une implémentation de pile 
-
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 a faire finir de modifier les interfaces
@@ -49,7 +47,8 @@ class fenetre :
         self.frame_acceuil.pack_propagate(False)
         self.frame_acceuil.pack(side = "top")
 
-        self.titre_menu = tk.Label(self.frame_acceuil, text="Casse Brique", font=("Helvetica", 45, "bold"), bg='#2a2a2a', fg='white')
+        self.titre_menu = tk.Label(self.frame_acceuil, text="Casse Brique", font=("Helvetica", 45, "bold"),
+                            bg='#2a2a2a', fg='white')
         self.titre_menu.pack(pady=(150, 50))
         
 
@@ -60,7 +59,8 @@ class fenetre :
         btn.pack(expand = 1)
 
         # bouton pour quitter le jeu
-        self.bouton_fermer = tk.Button(self.frame_acceuil, text = "quitter le jeu", fg = "red", command = self.fermer)
+        self.bouton_fermer = tk.Button(self.frame_acceuil, text = "quitter le jeu", fg = "red",
+                                command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
 
 
@@ -105,7 +105,8 @@ class fenetre :
         self.canvas.create_window(325, 400, window = self.bouton_retour)
 
         # bouton pour quitter le jeu
-        self.bouton_fermer = tk.Button(self.frame_jeu, text = "quitter le jeu", fg = "red", command = self.fermer)
+        self.bouton_fermer = tk.Button(self.frame_jeu, text = "quitter le jeu", fg = "red",
+                                command = self.fermer)
         self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
 
         #mise en pause
@@ -123,7 +124,7 @@ class fenetre :
             self.canvas.delete("fin")
 
         # Pour tous les supprimer d'un coup :
-        for btn in self.boutons_menu:
+        for btn in self.boutons_menu :
             btn.destroy()
         self.boutons_menu.clear() # On vide la liste
 
@@ -132,7 +133,7 @@ class fenetre :
         self.frame_bar.pack_forget()
         self.frame_info.pack_forget()
         self.frame_acceuil.pack(side = "top")
-        
+
 
         for i in range(4 - len(self.file_niveaux)) :
             btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i + 1]}",
@@ -240,7 +241,8 @@ class fenetre :
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
 
-        self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"), fill="white", state='hidden')
+        self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"),
+                                            fill="white", state='hidden')
         
         self.deplacement()
 
@@ -262,23 +264,23 @@ class fenetre :
         self.menu_nondetachable2 = tk.Menu(self.fenetre, tearoff = 0)
 
         self.menu_Principal.add_cascade(label = "Parametre :", menu = self.menu_nondetachable)
-        self.menu_Principal.add_cascade(label="restaurer le niveau", menu = self.menu_nondetachable1) 
-        self.menu_Principal.add_cascade(label="Quitter", menu = self.menu_nondetachable2)
-        self.menu_nondetachable1.add_command(label="restaurer le niveau", command=self.ecran_menu)
+        self.menu_Principal.add_cascade(label = "restaurer le niveau", menu = self.menu_nondetachable1) 
+        self.menu_Principal.add_cascade(label = "Quitter", menu = self.menu_nondetachable2)
+        self.menu_nondetachable1.add_command(label = "restaurer le niveau", command = self.ecran_menu)
         self.menu_nondetachable2.add_command(label = "Quitter", command = self.fermer)
 
         self.fenetre['menu'] = self.menu_Principal
 
 
-    def appuyer_touche(self, event):
-        if event.keysym in self.touches:
+    def appuyer_touche(self, event) :
+        if event.keysym in self.touches :
             self.touches[event.keysym] = True
 
-    def relacher_touche(self, event):
-        if event.keysym in self.touches:
+    def relacher_touche(self, event) :
+        if event.keysym in self.touches :
             self.touches[event.keysym] = False
 
-    def mise_en_pause(self,event = None):
+    def mise_en_pause(self,event = None) :
         """
         permet de mettre en pause le jeu
         """
@@ -314,7 +316,7 @@ class fenetre :
             # Si la touche Gauche est enfoncée et qu'on ne sort pas de l'écran
             if self.touches["Left"] and self.PosX - self.raquette_info.larguer / 2 > 0 :
                 self.PosX -= vitesse_raquette
-                self.canvas.move(self.raquette, -vitesse_raquette, 0)
+                self.canvas.move(self.raquette, - vitesse_raquette, 0)
 
             # Si la touche Droite est enfoncée et qu'on ne sort pas de l'écran
             if self.touches["Right"] and self.PosX < (650 - self.raquette_info.larguer / 2) :
@@ -324,9 +326,9 @@ class fenetre :
 
             # verification des collisions avec les briques
 
-            if not self.pause:
+            if not self.pause :
 
-                collision= self.gestion_briques.verifier_collision_balle(self.balle_info,self.canvas)
+                collision= self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
             # si il a une collision avec une brique, le score augmente de 1
                 if collision == True :
