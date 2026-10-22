@@ -5,19 +5,19 @@ fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
 car il y un probleme d'importation circulaire
 
-Le jeu devra présenter une implémentation de file et une de pile 
+Le jeu devra présenter une implémentation une de pile 
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 a faire finir de modifier les interfaces
 
 possible fusion entre fin_jeu() et gagnez()
-
-ameliorer les rebonds sur la raquette (pouvoir enleve de l'angle pour tirer plus droit)
 """
 
 import numpy as np
 import tkinter as tk
+from collections import deque
+
 from class_raquette import raquette
 from class_balle import balle
 from class_gestion_brique import gestion_brique
@@ -27,6 +27,8 @@ from class_gestion_brique import gestion_brique
 class fenetre :
 
     def __init__(self) :
+        self.file_niveaux = deque([1, 2, 3, 4])
+        self.prochain_niveau = self.file_niveaux.popleft()
 
         self.raquette_info = raquette(10, 100, "blue")
         self.vie = 1
@@ -40,12 +42,11 @@ class fenetre :
         self.frame_acceuil.pack_propagate(False)
         self.frame_acceuil.pack(side = "top")
 
-        # creation des boutons pour chaque niveau (de 1 a 4)
-        for i in range(1, 5):
-            btn = tk.Button(self.frame_acceuil, text = f"Niveau {i}",
-                command = lambda niv = i : self.charger_ecran_jeu(niv),
-                bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
-            btn.pack(pady = 10)
+        # creation des boutons pour chaque niveau
+        btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
+            command = lambda niv = self.prochain_niveau : self.charger_ecran_jeu(niv),
+            bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
+        btn.pack(pady = 10)
 
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.frame_acceuil, text = "quitter le jeu", fg = "red", command = self.fermer)
@@ -118,6 +119,9 @@ class fenetre :
         """
         charge l'ecran du jeu et cache la frame du menu
         """
+        if hasattr(self, "canvas") :
+            self.canvas.delete("fin")
+
         self.niveau = niveau
         self.text_niveau.config(text = f"Niveau : {self.niveau}")
 
@@ -154,16 +158,25 @@ class fenetre :
         # creation des briques, creer_brique(espece, couleur, ligne, colonne)
         if self.niveau == 1 : 
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(40, "red", 2, 5)
+            self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "red", 1, 6, 1, 1)
+
         if self.niveau == 2 :
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(20, "red", 4, 5)
+            self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "red", 1, 6, 1, 1)
+            self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 2)
+
         if self.niveau == 3 :
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(40, "green", 2, 5)
+            self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "green", 1, 6, 1, 1)
+
         if self.niveau == 4 :
             self.gestion_briques = gestion_brique(self.canvas)
-            self.gestion_briques.creer_brique(20, "green", 4, 5)
+            self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 0)
+            self.gestion_briques.creer_brique(35, "green", 1, 6, 1, 1)
+            self.gestion_briques.creer_brique(35, "green", 1, 5, 0, 2)
 
         # creation de la raquette
         self.raquette = self.canvas.create_rectangle(self.PosX - (self.raquette_info.larguer / 2),
@@ -297,23 +310,24 @@ class fenetre :
                         self.balle_info = balle(self.canvas, self.fenetre, 15,
                                             int(self.canvas.cget("height")), int(self.canvas.cget("width")))
 
-             # collision avec la raquette
-                elif self.collision(self.balle_info.Balle, self.raquette) == True :
-                    self.balle_info.DY = - self.balle_info.DY
-
-                    if self.balle_info.x - self.PosX > self.raquette_info.larguer / 5 :
-                        if self.balle_info.DX > 0 :
-                            self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
-                        else :
-                            self.balle_info.DX = np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (15 * self.balle_info.DX))
-
-
-                    elif self.balle_info.x - self.PosX < - self.raquette_info.larguer / 5 :
-                        if self.balle_info.DX < 0 :
-                            self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (33 * self.balle_info.DX))
-                        else :
-                            self.balle_info.DX = - np.abs(self.balle_info.DX) * (1 + (self.balle_info.x - self.PosX) / (15 * self.balle_info.DX))
+                # collision avec la raquette
+                elif self.collision(self.balle_info.Balle, self.raquette) == True:
+                    masse_balle = 1.0 
                     
+                    self.balle_info.DY = -self.balle_info.DY
+                    # L'écart par rapport au centre de la raquette crée une force de rappel latérale F_x
+                    offset = self.balle_info.x - self.PosX
+                    seuil = self.raquette_info.larguer / 5
+
+                    if abs(offset) > seuil:
+                        k_force = 0.3 
+                        
+                        # Force exercée par la raquette : force_x proportionnelle à l'offset
+                        force_x = k_force * offset
+                        
+                        acceleration_x = force_x / masse_balle
+                        self.balle_info.DX += acceleration_x
+                  
                     
             # nouvelle vitesse de la balle
                 self.balle_info.x += self.balle_info.DX
@@ -327,7 +341,7 @@ class fenetre :
                                 self.balle_info.y + self.balle_info.rayon)
 
             # rafraichissement de la fenetre pour mettre a jour la position et le vitesse
-            self.fenetre.after(50, self.deplacement)
+            self.fenetre.after(32, self.deplacement)
 
         if self.vie == 0 :
             self.fin_jeu()
@@ -368,6 +382,12 @@ class fenetre :
         self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Arial", 32, "bold"), tags = "fin")
         self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}",
                                 justify = "left", fill = "white", font = ("Arial", 20, "bold"), tags = "fin")
+
+        # creer un bouton "jouer"
+        if len(self.file_niveaux) != 0 :
+            self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau", command = lambda: self.charger_ecran_jeu(self.file_niveaux.popleft()),
+                bg = "#4CAF50", fg = "white", font = ("Arial", 14, "bold"), padx = 10, pady = 5)
+            self.canvas.create_window(325, 350, window = self.bouton_jouer, tags = "fin")
         
         # creer un bouton "Rejouer"
         self.bouton_rejouer = tk.Button(self.canvas, text = "Rejouer", command = self.lancement_jeu,
@@ -378,5 +398,10 @@ class fenetre :
                     bg="#333333", fg="white", font=("Arial", 14, "bold"), padx = 10, pady = 5)
         
         # incruster ce bouton sur le canvas
+        
         self.canvas.create_window(325, 400, window = self.bouton_rejouer, tags = "fin")
-        self.canvas.create_window(325, 500, window = self.bouton_retour, tags = "fin")
+        self.canvas.create_window(325, 450, window = self.bouton_retour, tags = "fin")
+
+
+
+

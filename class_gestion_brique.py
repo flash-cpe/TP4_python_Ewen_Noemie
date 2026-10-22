@@ -15,25 +15,22 @@ class gestion_brique :
     def __init__(self, canvas) :
         self.canvas = canvas
         self.liste_brique = []
+        self.hauteur_brique = 40
+        self.largeur_brique = 90
 
-
-    def creer_brique(self, espace, couleur, nb_ligne, nb_colonne) :
+    def creer_brique(self, espace, couleur, nb_ligne, nb_colonne, saut_colonne, ligne_debut) :
         """
         creer les briques et les stock dans une liste.
         La taille des briques s'adapte a la taille du canvas
         """
-        hauteur_canvas = int(self.canvas.cget("height"))
-        largeur_canvas = int(self.canvas.cget("width"))
-
-        hauteur_brique = (hauteur_canvas / 3) / nb_ligne - espace
-        largeur_brique = largeur_canvas / nb_colonne - espace
+    
 
         for ligne in range(nb_ligne) :
-            for colonne in range(nb_colonne) :
-                x = espace / 2 + colonne * (largeur_brique + espace)                     
-                y = espace + ligne * (hauteur_brique + espace)
+            for colonne in range(int(nb_colonne / (1 + saut_colonne))) :
+                x = espace / 2 + colonne * (1 + saut_colonne) * (self.largeur_brique + espace)                     
+                y = ligne_debut * (self.hauteur_brique + espace) + espace + ligne * (self.hauteur_brique + espace)
     
-                B = brique(x, y, hauteur_brique, largeur_brique, couleur, self.canvas)
+                B = brique(x, y, self.hauteur_brique, self.largeur_brique, couleur, self.canvas)
                 self.liste_brique.append(B)
 
 
