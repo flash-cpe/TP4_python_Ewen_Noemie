@@ -36,6 +36,8 @@ class fenetre :
 
         self.touches = {"Left": False, "Right": False}
 
+        self.partie_gagnee = False
+
         self.raquette_info = raquette(10, 100, "blue")
         self.vie = 1
         self.fenetre = tk.Tk()
@@ -54,8 +56,8 @@ class fenetre :
         
 
         # creation des boutons pour chaque niveau
-        btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.prochain_niveau}",
-            command = lambda niv = self.prochain_niveau : self.charger_ecran_jeu(niv),
+        btn = tk.Button(self.frame_acceuil, text = f"Niveau {1}",
+            command = lambda : self.charger_ecran_jeu(1),
             bg = '#1a1a1a', fg = "#07fa1f", font = ("Helvetica", 14), padx = 15, pady = 5)
         btn.pack(expand = 1)
 
@@ -187,9 +189,10 @@ class fenetre :
         self.canvas.delete("all")
         self.pause= False
 
+        self.partie_gagnee = False
+
         self.temps_ecoule = 0
         self.text_temps.config(text = f"Temps : {self.temps_ecoule}s")
-
 
         self.score = 0
         self.text_score.config(text = f"Score : {self.score}")
@@ -482,6 +485,11 @@ class fenetre :
         """
         affiche un message de fin et les boutons pour rejoeur et retourner au menu
         """
+        if self.partie_gagnee :
+            return
+
+        self.partie_gagnee = True
+
         # afficher les statistique du joueur au centre du canvas
         self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Helvetica", 32, "bold"), tags = "fin")
         self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}\nTemps : {self.temps_ecoule} secondes ",
@@ -489,7 +497,10 @@ class fenetre :
 
         # creer un bouton "jouer"
         if len(self.file_niveaux) != 0 :
-            self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau", command = lambda: self.charger_ecran_jeu(self.file_niveaux.popleft()),
+            if len(self.file_niveaux) + self.niveau == 5 :
+                self.prochain_niveau = self.file_niveaux.popleft()
+
+            self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau", command = lambda : self.charger_ecran_jeu(self.niveau + 1),
                 bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
             self.canvas.create_window(325, 350, window = self.bouton_jouer, tags = "fin")
         
