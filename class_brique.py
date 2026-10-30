@@ -2,13 +2,15 @@
 date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la class brique
-a faire : utiliser soit une pile soit une file si possible 
+a faire :  
 """
 
 
 class brique :
     """
-    creer une brique sur le canvas a partir de ses donnees de dimension, de positions et de couleur
+    creer une brique sur le canvas a partir de ses donnees de dimension (de type int),
+    de positions (de type int) et de couleur (de type str)
+    le canvas sert a creer et supprimer les briques
     """
 
     def __init__(self, posX, posY, hauteur, largeur, couleur, canvas) :
@@ -26,7 +28,7 @@ class brique :
 
     def detruire(self) :
         """
-        permet de suprimer une brique a partir de ses donnees
+        permet de supprimer une brique a partir de ses donnees
         """
         self.canvas.delete(self.identifiant)
         

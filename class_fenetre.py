@@ -3,16 +3,13 @@ date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
-car il y un probleme d'importation circulaire
+car il y un probleme d'importation circulaire peux etre avec une autre methode c est possible
 
 fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
 
 a faire finir de modifier les interfaces
-
-possible fusion entre fin_jeu() et gagnez()
 """
 
-import numpy as np
 import tkinter as tk
 
 from collections import deque
@@ -27,14 +24,14 @@ class fenetre :
 
     def __init__(self) :
         self.liste_niveau = [1, 2, 3, 4, 5]
-        self.file_niveaux = deque([1, 2, 3, 4, 5])
+        self.file_niveaux = deque([1, 2, 3, 4, 5]) #deque() permet d'optimiser la rapidité des opérations 
         self.prochain_niveau = self.file_niveaux.popleft()
 
         self.boutons_menu = []
 
         self.pile_niveau_5 = []
 
-        self.touches = {"Left": False, "Right": False}
+        self.touches = {"Left" : False, "Right" : False}
 
         self.partie_gagnee = False
 
@@ -55,7 +52,7 @@ class fenetre :
         self.titre_menu.pack(pady=(150, 50))
         
 
-        # creation des boutons pour chaque niveau
+        # creation du bouton pour le premier niveau
         btn = tk.Button(self.frame_acceuil, text = f"Niveau {1}",
             command = lambda : self.charger_ecran_jeu(1),
             bg = '#1a1a1a', fg = "#07fa1f", font = ("Helvetica", 14), padx = 15, pady = 5)
@@ -69,9 +66,9 @@ class fenetre :
 
 
     # ecran de jeu
+    # creation de differentes Frame pour disposer tous les Label de texte et le canvas
         self.frame_jeu = tk.Frame(self.fenetre, bg = '#2a2a2a')
         self.frame_info = tk.Frame(self.fenetre)
-
         self.frame_bar = tk.Frame(self.frame_jeu, width = 650, height = 50, bg = '#1a1a1a')
 
         self.text_niveau = tk.Label(self.frame_info, text = "Niveau :", font = ("Helvetica", 12, "bold"))
@@ -81,22 +78,20 @@ class fenetre :
         self.text_score.pack(padx = 20, pady = 10, side = "right")
 
         self.text_temps = tk.Label(self.frame_bar, text = "Temps : 0s", font = ("Helvetica", 12, "bold"))
-        self.text_temps.pack(padx = 20, pady = 10, side = "right", expand=True)
+        self.text_temps.pack(padx = 20, pady = 10, side = "right", expand = True)
 
         self.text_vie = tk.Label(self.frame_bar, text = "Vie :", font = ("Helvetica", 12, "bold"))
         self.text_vie.pack(padx = 20, pady = 10, side = "left")
 
-        self.canvas = tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = 'black')
+        self.canvas = tk.Canvas(self.frame_jeu, width = 650, height = 650, bg = "black")
         self.canvas.pack()
-
-
 
 
         # position initiale de la raquette
         self.PosX = int(self.canvas.cget("width")) / 2 
         self.PosY = int(self.canvas.cget("height")) - 30  
 
-       
+        # acctiver la detection des touches par le canvas
         self.canvas.focus_set()
         self.canvas.bind("<KeyPress>", self.appuyer_touche)
         self.canvas.bind("<KeyRelease>", self.relacher_touche)
@@ -115,10 +110,10 @@ class fenetre :
         # bouton pour quitter le jeu
         self.bouton_fermer = tk.Button(self.frame_jeu, text = "quitter le jeu", fg = "red",
                                 command = self.fermer)
-        self.bouton_fermer.pack(side = "bottom", pady = "5", padx = "5")
+        self.bouton_fermer.pack(side = "bottom", pady = 5, padx = 5)
 
         #mise en pause
-        self.pause= False
+        self.pause = False
         self.fenetre.bind('<space>', self.mise_en_pause)
 
 
@@ -131,36 +126,36 @@ class fenetre :
         if hasattr(self, "canvas") :
             self.canvas.delete("fin")
 
+        # permet d eviter de lancer la fonction deplacement() 2 fois quand il y a un retour menu
         if hasattr(self, "rafraichissement") and self.rafraichissement is not None :
             self.fenetre.after_cancel(self.rafraichissement)
             self.rafraichissement = None
 
-        # Pour tous les supprimer d'un coup :
+        # supprime tous les boutons du menu pour eviter les doublons
         for btn in self.boutons_menu :
             btn.destroy()
-        self.boutons_menu.clear() # On vide la liste
+        self.boutons_menu.clear() # on vide la liste
 
-
+        # permet de passer des l ecran de jeu a l ecran du menu
         self.frame_jeu.pack_forget()
         self.frame_bar.pack_forget()
         self.frame_info.pack_forget()
         self.frame_acceuil.pack(side = "top")
 
-
+        # creer les boutons des niveaux disponibles
         for i in range(4 - len(self.file_niveaux)) :
             btn = tk.Button(self.frame_acceuil, text = f"Niveau {self.liste_niveau[i + 1]}",
                 command = lambda niv = self.liste_niveau[i + 1] : self.charger_ecran_jeu(niv),
                 bg = '#1a1a1a', fg = "#07fa1f", font = ("Arial", 14), padx = 15, pady = 5)
-            btn.pack(pady = 10)
-            self.boutons_menu.append(btn) # Tu l'ajoutes à ta liste
-
+            btn.pack(expand = 1) 
+            self.boutons_menu.append(btn)
 
     def charger_ecran_jeu(self, niveau) :
         """
         charge l'ecran du jeu et cache la frame du menu
         """
         if hasattr(self, "canvas") :
-            self.canvas.delete("fin")
+            self.canvas.delete("fin") # supprime tous les elements qui ont le tag "fin"
 
         self.niveau = niveau
         self.text_niveau.config(text = f"Niveau : {self.niveau}")
@@ -184,10 +179,10 @@ class fenetre :
 
     def lancement_jeu(self) :
         """
-        creer tous les objets du canvas et initialise les valeurs
+        creer tous les objets du canvas et reinitialise les valeurs
         """
         self.canvas.delete("all")
-        self.pause= False
+        self.pause = False
 
         self.partie_gagnee = False
 
@@ -200,7 +195,8 @@ class fenetre :
         self.vie = 3
         self.text_vie.config(text = f"Vie : {self.vie}")
 
-        # creation des briques, creer_brique(espece, couleur, ligne, colonne, saut_colonne, ligne_depart)
+        # creation des briques pour chaque niveau, et les stocks pour le niveau 5
+        # creer_brique(espece, couleur, ligne, colonne, saut_colonne, ligne_depart)
         if self.niveau == 1 : 
             self.gestion_briques = gestion_brique(self.canvas)
             self.gestion_briques.creer_brique(35, "red", 1, 5, 0, 0)
@@ -237,13 +233,15 @@ class fenetre :
             self.pile_niveau_5.append((35, "green", 1, 6, 1, 1))
             self.pile_niveau_5.append((35, "green", 1, 5, 0, 2))
 
+        # le niveau 5 est un depilement 2 lignes par 2 lignes des briques de tous les niveaux d avant 
         if self.niveau == 5 :
             self.gestion_briques = gestion_brique(self.canvas)
             self.pile_brique = self.pile_niveau_5
-            for i in range (2) :
+            for i in range(2) :
                 args = list(self.pile_brique.pop())
                 args[-1] = i
-                self.gestion_briques.creer_brique(*args)
+                # * permet de prendre chaque element de args comme un paramettre
+                self.gestion_briques.creer_brique(*args) 
                 
 
 
@@ -258,8 +256,9 @@ class fenetre :
         self.balle_info = balle(self.canvas, self.fenetre, 15, int(self.canvas.cget("height")),
                                 int(self.canvas.cget("width")))
 
-        self.texte_pause = self.canvas.create_text(325, 325, text="PAUSE", font=("Helvetica", 40, "bold"),
-                                                fill="white", state='hidden')
+        self.texte_pause = self.canvas.create_text(325, 325, text = "PAUSE",
+                                                font = ("Helvetica", 40, "bold"),
+                                                fill = "white", state = "hidden")
 
         self.chronometre()
         self.deplacement()
@@ -287,7 +286,7 @@ class fenetre :
         self.menu_nondetachable1.add_command(label = "restaurer le niveau", command = self.ecran_menu)
         self.menu_nondetachable2.add_command(label = "Quitter", command = self.fermer)
 
-        self.fenetre['menu'] = self.menu_Principal
+        self.fenetre["menu"] = self.menu_Principal
 
 
     def appuyer_touche(self, event) :
@@ -298,22 +297,23 @@ class fenetre :
         if event.keysym in self.touches :
             self.touches[event.keysym] = False
 
-    def mise_en_pause(self,event = None) :
+
+    def mise_en_pause(self, event = None) :
         """
         permet de mettre en pause le jeu
         """
         self.pause = not self.pause
 
-        if hasattr(self,'texte_pause') :
+        if hasattr(self, "texte_pause") :
             if self.pause :
                 self.canvas.itemconfig(self.texte_pause, state = "normal")
             else:
                 self.canvas.itemconfig(self.texte_pause, state = "hidden")
 
-    def chronometre(self):
+    def chronometre(self) :
 
         if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
-            if not self.pause:
+            if not self.pause :
                 self.temps_ecoule += 1
                 self.text_temps.config(text = f"Temps : {self.temps_ecoule}s")
 
@@ -331,29 +331,27 @@ class fenetre :
 
     def deplacement(self) :
         """
-        gere le deplacement et les collision de la balle + met en pause le jeu
+        gere le deplacement et les collision de la balle et met en pause le jeu
         """
         if self.vie != 0 and len(self.gestion_briques.liste_brique) != 0 :
 
-            # Vitesse de déplacement de la raquette (en pixels par frame)
+            # vitesse de déplacement de la raquette (en pixels par frame)
             vitesse_raquette = 14  
 
-            # Si la touche Gauche est enfoncée et qu'on ne sort pas de l'écran
+            # si la touche Gauche est enfoncee et qu on ne sort pas de l ecran
             if self.touches["Left"] and self.PosX - self.raquette_info.larguer / 2 > 0 :
                 self.PosX -= vitesse_raquette
                 self.canvas.move(self.raquette, - vitesse_raquette, 0)
 
-            # Si la touche Droite est enfoncée et qu'on ne sort pas de l'écran
+            # si la touche Droite est enfoncee et qu on ne sort pas de l ecran
             if self.touches["Right"] and self.PosX < (650 - self.raquette_info.larguer / 2) :
                 self.PosX += vitesse_raquette
                 self.canvas.move(self.raquette, vitesse_raquette, 0)
 
 
             # verification des collisions avec les briques
-
             if not self.pause :
-
-                collision= self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
+                collision = self.gestion_briques.verifier_collision_balle(self.balle_info, self.canvas)
 
             # si il a une collision avec une brique, le score augmente de 1
                 if collision == True :
@@ -364,8 +362,10 @@ class fenetre :
                 if self.collision(self.balle_info.Balle, self.raquette) != True :
 
                 # rebond a droite
-                    if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX > self.balle_info.largeur : 
-                        self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon) - self.balle_info.x
+                    if self.balle_info.x + self.balle_info.rayon + self.balle_info.DX >\
+                    self.balle_info.largeur : 
+                        self.balle_info.x = 2 * (self.balle_info.largeur - self.balle_info.rayon)\
+                        - self.balle_info.x
                         self.balle_info.DX = - self.balle_info.DX
 
                 # rebond a gauche
@@ -384,18 +384,19 @@ class fenetre :
                         self.vie -= 1
                         self.text_vie.config(text = f"Vie : {self.vie}")
                         self.balle_info = balle(self.canvas, self.fenetre, 15,
-                                            int(self.canvas.cget("height")), int(self.canvas.cget("width")))
+                                        int(self.canvas.cget("height")), int(self.canvas.cget("width")))
 
                 # collision avec la raquette
-                elif self.collision(self.balle_info.Balle, self.raquette) == True:
+                elif self.collision(self.balle_info.Balle, self.raquette) == True :
                     masse_balle = 1.0 
                     
-                    self.balle_info.DY = -self.balle_info.DY
-                    # L'écart par rapport au centre de la raquette crée une force de rappel latérale F_x
+                    self.balle_info.DY = - self.balle_info.DY
+
+                    # l ecart par rapport au centre de la raquette cree une force de rappel latérale F_x
                     offset = self.balle_info.x - self.PosX
                     seuil = self.raquette_info.larguer / 5
 
-                    if abs(offset) > seuil:
+                    if abs(offset) > seuil :
                         k_force = 0.3 
                         
                         # Force exercée par la raquette : force_x proportionnelle à l'offset
@@ -416,7 +417,7 @@ class fenetre :
                                 self.balle_info.x + self.balle_info.rayon,
                                 self.balle_info.y + self.balle_info.rayon)
 
-            # rafraichissement de la fenetre pour mettre a jour la position et le vitesse
+            # rafraichissement de la fenetre pour mettre a jour la position et la vitesse
             self.rafraichissement = self.fenetre.after(32, self.deplacement)
 
         if self.niveau != 5 :
@@ -429,11 +430,13 @@ class fenetre :
                 return
 
 
-
         if self.niveau == 5 :
             if self.vie == 0 :
                 self.fin_jeu()
 
+            # dans le niveau 5, si il reste des briques dans la liste self.pile.brique, on depile 
+            # 2 lignes de briques qui sont dans cette liste quand la balle est assez basse pour eviter 
+            # les collisons
             if len(self.gestion_briques.liste_brique) == 0 and len(self.pile_brique) != 0 :
                 if self.balle_info.y - self.balle_info.rayon > 300 :
                     for i in range (2) :
@@ -465,10 +468,11 @@ class fenetre :
         affiche un message de fin et les boutons pour rejouer et retourner au menu
         """
         # afficher le texte "Game Over" au centre du canvas
-        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red", font = ("Helvetica", 32, "bold"), tags = "fin")
+        self.canvas.create_text(325, 250, text = "GAME OVER", fill = "red",
+                                font = ("Helvetica", 32, "bold"), tags = "fin")
         
         # creer un bouton "Rejouer"
-        self.bouton_rejouer = tk.Button(self.canvas, text="Rejouer", command = self.lancement_jeu,
+        self.bouton_rejouer = tk.Button(self.canvas, text = "Rejouer", command = self.lancement_jeu,
             bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
 
         # boutton pour retourner au menu
@@ -476,7 +480,7 @@ class fenetre :
                     bg="#333333", fg="white", font=("Helvetica", 14, "bold"), padx = 10, pady = 5)
         
         
-        # incruster des boutons sur le canvas
+        # incruster les boutons sur le canvas
         self.canvas.create_window(325, 300, window = self.bouton_rejouer, tags = "fin")
         self.canvas.create_window(325, 400, window = self.bouton_retour, tags = "fin")
 
@@ -490,17 +494,21 @@ class fenetre :
 
         self.partie_gagnee = True
 
-        # afficher les statistique du joueur au centre du canvas
-        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green", font = ("Helvetica", 32, "bold"), tags = "fin")
-        self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie} \nscore : {self.score}\nTemps : {self.temps_ecoule} secondes ",
-                                justify = "left", fill = "white", font = ("Helvetica", 20, "bold"), tags = "fin")
+        # affiche les statistiques du joueur sur le canvas
+        self.canvas.create_text(325, 150, text = "VOUS AVEZ GAGNE", fill = "green",
+                                font = ("Helvetica", 32, "bold"), tags = "fin")
+        self.canvas.create_text(325, 250, text = f"statistiques \nvie restante : {self.vie}\
+                                \nscore : {self.score}\nTemps : {self.temps_ecoule} secondes ",
+                                justify = "left", fill = "white", font = ("Helvetica", 20, "bold"),
+                                tags = "fin")
 
         # creer un bouton "jouer"
         if len(self.file_niveaux) != 0 :
             if len(self.file_niveaux) + self.niveau == 5 :
                 self.prochain_niveau = self.file_niveaux.popleft()
 
-            self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau", command = lambda : self.charger_ecran_jeu(self.niveau + 1),
+            self.bouton_jouer = tk.Button(self.canvas, text = "prochain niveau",
+                command = lambda : self.charger_ecran_jeu(self.niveau + 1),
                 bg = "#4CAF50", fg = "white", font = ("Helvetica", 14, "bold"), padx = 10, pady = 5)
             self.canvas.create_window(325, 350, window = self.bouton_jouer, tags = "fin")
         

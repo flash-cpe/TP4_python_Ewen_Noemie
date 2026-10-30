@@ -2,18 +2,19 @@
 date : 8/10/2026
 auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la class balle
-a faire : modifier le deplacement pour respecter la loi de Descartes quand touche la raquette  prendre en compte les rebords,
-si la balle atteint le fond moins une vie
+a faire : 
 """
 import random
 import math
-import tkinter as tk
-from time import sleep
 
 
 class balle :
     """
     creer la balle avec toutes ses inforations de dimension et lui donne une vitesse initiale
+    vers le haut
+    a part la canvas et la fenetre qui permettent de positionner les briques,
+    les angles et les vitesses sont de type float
+    et les autres variables sont de type int 
     """
     
     def __init__(self, canvas, fenetre, rayon, hauteur, largeur) :
@@ -30,9 +31,10 @@ class balle :
 
         # Calcul des composantes DX et DY
         self.DX = self.vitesse * math.cos(self.angle)
-        self.DY = self.vitesse * math.sin(self.angle)  # Toujours négatif -> la balle monte toujours !
+        self.DY = self.vitesse * math.sin(self.angle)
 
         # creation de la balle
-        self.Balle = self.canvas.create_oval(self.x - self.rayon, self.y - self.rayon, self.x + self.rayon,
-                                            self.y + self.rayon, width = 1, outline = 'red', fill = 'blue')
+        self.Balle = self.canvas.create_oval(self.x - self.rayon, self.y - self.rayon,
+                                             self.x + self.rayon, self.y + self.rayon,
+                                             width = 1, outline = "red", fill = "blue")
 

@@ -9,8 +9,8 @@ class raquette :
 
     def __init__(self, hauteur, largeur, couleur) :
         """
-        creation de la classe barre, qui permet d'avoir les information de dimension (de type int) et
-        de couleur de la barre (de type str)
+        creation de la classe raquette, qui permet d'avoir les information de dimension (de type int) et
+        de couleur de la raquette (de type str)
         """
         self.hauteur = hauteur
         self.larguer = largeur
