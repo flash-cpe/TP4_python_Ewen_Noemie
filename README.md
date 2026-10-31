@@ -15,7 +15,7 @@ Spécificités de l'implémentation :
     Déplacement avec les flèches directionnelles.
     La touche espace permet de mettre le jeu en pause.
 
-    Il faut gagner le niveau pécédent pour débloquer le suivant.
+    Il faut gagner le niveau précédent pour débloquer le suivant.
 
     Le jeu possède 5 niveaux de difficulté, dont le niveau 5 qui fonctionne par dépilement de 2 lignes par 2 lignes de briques de toutes les briques des autres niveaux. 
 
