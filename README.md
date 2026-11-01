@@ -1,3 +1,6 @@
+Noms : Ewen MORIETTE, Noémie DETOT
+
+
 Répertoire Git du projet : https://github.com/flash-cpe/TP4_python_Ewen_Noemie.git
 
 
