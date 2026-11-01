@@ -4,10 +4,6 @@ auteur : Ewen MORIETTE , Noemie DETOT
 fonction : contient la classe de la fenetre du jeu
 a faire : impossibilité de mettre la fonction clavier dans la class barre
 car il y un probleme d'importation circulaire peux etre avec une autre methode c est possible
-
-fichier readme indiquant les règles du jeu et les spécificités de votre implémentation
-
-a faire finir de modifier les interfaces
 """
 
 import tkinter as tk
